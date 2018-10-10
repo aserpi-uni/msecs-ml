@@ -1,6 +1,6 @@
 from ex_2 import *
-from ex_2.sample import create_sample
+from ex_2.data_preprocessing import partition_dataset
 
 logger = logging.getLogger(__name__)
 
-sample = create_sample(FILE, SAMPLE_RATE, CORRECT_LABEL, INCORRECT_LABEL)
+correct_dict, incorrect_dict = partition_dataset()
