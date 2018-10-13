@@ -5,6 +5,7 @@ from collections import defaultdict
 from random import random
 
 from ex_2 import INPUT_FILE, DATASET, SAMPLE_RATE, CORRECT_LABEL, INCORRECT_LABEL, ALGORITHM
+from ex_2.evaluation import initialize_stats
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +30,7 @@ def clean_line(line):
 def partition_dataset():
     with contextlib.suppress(FileNotFoundError):
         os.remove(DATASET)
+    initialize_stats()
     corrects = 0
     incorrects = 0
     correct_dict = defaultdict(int)

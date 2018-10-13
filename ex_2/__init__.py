@@ -20,6 +20,7 @@ INCORRECT_LABEL = getenv("INCORRECT_LABEL", "spam")
 
 set_algorithm()
 LAPLACE_SMOOTHING = not (getenv("LAPLACE_SMOOTHING") == "false")
+ITERATIONS = int(getenv("ITERATIONS", 100))
 SAMPLE_RATE = float(getenv("SAMPLE_RATE", 0.3))
 
 logger.info(
