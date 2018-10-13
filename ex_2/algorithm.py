@@ -2,7 +2,7 @@ import logging
 from enum import Enum, unique
 from math import log
 
-from ex_2.evaluation import evaluate, stats
+from ex_2.evaluation import evaluate
 
 logger = logging.getLogger(__name__)
 
@@ -89,5 +89,3 @@ class Algorithm(Enum):
                                                 total_words, unique_words)
                 else:
                     raise KeyError("Unknown algorithm")
-
-        stats()

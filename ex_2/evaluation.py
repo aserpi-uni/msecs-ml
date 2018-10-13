@@ -31,7 +31,8 @@ def evaluate(head, correct_prob, incorrect_prob):
 
 
 def stats():
-    logger.info("TP: {}, FP: {}, TN: {}, FN: {}".format(tp, fp, tn, fn))
-    logger.info("Accuracy: {}".format(1 - (fp + fn)/(tp + fp + tn + fn)))
-    logger.info("Recall: {}".format(tp/(tp + fn)))
-    logger.info("Precision: {}".format(tp/(tp + fp)))
+    return {
+        "total": {"TP": tp, "FP": fp, "TN": tn, "FN": fn},
+        "accuracy": 1 - (fp + fn)/(tp + fp + tn + fn),
+        "recall": tp/(tp+fn),
+        "precision": tp/(tp+fp)}
