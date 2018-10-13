@@ -4,7 +4,7 @@ import os
 from collections import defaultdict
 from random import random
 
-from ex_2 import INPUT_FILE, DATASET_FILE, SAMPLE_RATE, CORRECT_LABEL, INCORRECT_LABEL, ALGORITHM
+from ex_2 import INPUT_FILE, DATASET, SAMPLE_RATE, CORRECT_LABEL, INCORRECT_LABEL, ALGORITHM
 
 logger = logging.getLogger(__name__)
 
@@ -15,26 +15,26 @@ def add_words(phrase, dictionary):
 
 
 def clean_line(line):
-    head, body = line.split("\t")
+    head, body = line.strip("\n").split("\t")
     body = body.lower()
 
     if ALGORITHM.delete_duplicates():
-        body = set(body.strip("\n").split(" "))
+        body = set(body.split(" "))
         body.discard("")
         body = " ".join(body)
 
-    return "{}\t{}\n".format(head, body)
+    return "{}\t{}".format(head, body)
 
 
 def partition_dataset():
     with contextlib.suppress(FileNotFoundError):
-        os.remove(DATASET_FILE)
+        os.remove(DATASET)
     corrects = 0
     incorrects = 0
     correct_dict = defaultdict(int)
     incorrect_dict = defaultdict(int)
 
-    with open(INPUT_FILE) as fin, open(DATASET_FILE, "a") as fout:
+    with open(INPUT_FILE) as fin, open(DATASET, "a") as fout:
         for line in fin:
             line = clean_line(line)
             if random() < SAMPLE_RATE:
@@ -43,13 +43,13 @@ def partition_dataset():
                 else:
                     incorrects += 1
             else:
-                fout.write("{}".format(line))
+                fout.write("{}\n".format(line))
 
     return corrects, incorrects, correct_dict, incorrect_dict
 
 
 def process_sample_line(line, correct_dict, incorrect_dict):
-    head, body = line.strip("\n").split("\t")
+    head, body = line.split("\t")
 
     if head == CORRECT_LABEL:
         add_words(body, correct_dict)

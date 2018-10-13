@@ -1,22 +1,29 @@
 import logging
-import random
+from os import getenv
 
-from ex_2.algorithm import AlgorithmType
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-INPUT_FILE = "./ex_2/SMSSpamCollection"
-DATASET_FILE = "./ex_2/dataset"
 
-CORRECT_LABEL = "ham"
-INCORRECT_LABEL = "spam"
+def set_algorithm():
+    from ex_2.algorithm import Algorithm
 
-ALGORITHM = random.choice(list(AlgorithmType))
-SAMPLE_RATE = 0.3
+    global ALGORITHM
+    ALGORITHM = Algorithm(getenv("ALGORITHM", "multinomial"))
+
+
+INPUT_FILE = getenv("INPUT_FILE", "./ex_2/SMSSpamCollection")
+DATASET = getenv("DATASET_FILE", "./ex_2/dataset")
+CORRECT_LABEL = getenv("CORRECT_LABEL", "ham")
+INCORRECT_LABEL = getenv("INCORRECT_LABEL", "spam")
+
+set_algorithm()
+LAPLACE_SMOOTHING = not (getenv("LAPLACE_SMOOTHING") == "false")
+SAMPLE_RATE = float(getenv("SAMPLE_RATE", 0.3))
 
 logger.info(
-    "Input file: {}\nDataset: {}\nCorrect label: {}\nIncorrect label: {}".format(INPUT_FILE, DATASET_FILE,
-                                                                                 CORRECT_LABEL, INCORRECT_LABEL,
-                                                                                 SAMPLE_RATE))
-logger.info("Algorithm: {}\nSample rate: {}".format(ALGORITHM, SAMPLE_RATE))
+    "Input file: {}\nDataset: {}\nLabel (correct/incorrect): {}".format(INPUT_FILE, DATASET, CORRECT_LABEL,
+                                                                        INCORRECT_LABEL, SAMPLE_RATE))
+logger.info("Algorithm: {}\nSample rate: {}, Laplace smoothing: {}".format(ALGORITHM, SAMPLE_RATE, LAPLACE_SMOOTHING))
+
