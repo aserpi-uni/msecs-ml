@@ -21,19 +21,19 @@ class Algorithm(Enum):
 
         for word in body.split(" "):
             if word in correct_dict and word not in incorrect_dict:
-                logger.info(evaluate(head, 1, 0))
+                logger.info("{}\n{}\n".format(body, evaluate(head, 1, 0)))
                 found = True
                 break
             if word not in correct_dict and word in incorrect_dict:
                 found = True
-                logger.info(evaluate(head, 0, 1))
+                logger.info("{}\n{}\n".format(body, evaluate(head, 0, 1)))
                 break
             if word in correct_dict and word in incorrect_dict:
                 correct_prob += log(correct_dict[word]/(corrects + incorrects))
                 incorrect_prob += log(incorrect_dict[word]/(corrects + incorrects))
 
         if not found:
-            logger.info(evaluate(head, correct_prob, incorrect_prob))
+            logger.info("{}\n{}\n".format(body, evaluate(head, correct_prob, incorrect_prob)))
 
     @classmethod
     def learn_multinomial(cls, line, corrects, incorrects, correct_dict, incorrect_dict, total_words, unique_words):
@@ -50,18 +50,19 @@ class Algorithm(Enum):
         else:
             for word in body.split(" "):
                 if word in correct_dict and word not in incorrect_dict:
-                    logger.info(evaluate(head, 1, 0))
+                    logger.info("{}\n{}\n".format(body, evaluate(head, 1, 0)))
                     found = True
                     break
                 if word not in correct_dict and word in incorrect_dict:
                     found = True
-                    logger.info(evaluate(head, 0, 1))
+                    logger.info("{}\n{}\n".format(body, evaluate(head, 0, 1)))
                     break
                 if word in correct_dict and word in incorrect_dict:
                     correct_prob += log(correct_dict[word]/total_words)
                     incorrect_prob += log(incorrect_dict[word]/total_words)
+
         if not found:
-            logger.info(evaluate(head, correct_prob, incorrect_prob))
+            logger.info("{}\n{}\n".format(body, evaluate(head, correct_prob, incorrect_prob)))
 
     def delete_duplicates(self):
         if self is Algorithm.BERNOULLI:
