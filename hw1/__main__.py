@@ -53,6 +53,18 @@ def malware_classification(directory, directory_results, algorithms, keys):
         print_heatmap(confusion_matrices[alg], alg, directory_results, labels)
 
 
+def main(classifier, drebin, out, algs=None, feats=None):
+    if not algs:
+        algs = ["bernoulli", "random_forest", "svc", "linear_svc"]
+
+    if classifier == "malware":
+        malware_classification(drebin, out, algs, feats)
+    elif classifier == "family":
+        family_classification(drebin, out, algs, feats)
+    else:
+        raise KeyError
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -66,12 +78,5 @@ if __name__ == "__main__":
     parser.add_argument("--features", nargs="*")
 
     args = vars(parser.parse_args())
-    if not args["algorithms"]:
-        args["algorithms"] = ["bernoulli", "random_forest", "svc", "linear_svc"]
 
-    if args["classifier"] == "malware":
-        malware_classification(args["drebin"], args["output"], args["algorithms"], args["features"])
-    elif args["classifier"] == "family":
-        family_classification(args["drebin"], args["output"], args["algorithms"], args["features"])
-    else:
-        raise KeyError
+    main(args["classifier"], args["drebin"], args["output"], args["algorithms"], args["features"])
