@@ -12,14 +12,7 @@ def family_classification(directory, directory_results, algorithms, keys):
     families = family_dataframe(directory).groupby("family").filter(lambda f: len(f) > 20) \
         .set_index("sha256").sort_index()
 
-    features = feature_dataframe(families.index.values, directory)
-    if keys:
-        features = features[keys]
-
-    # Replace NaNs with empty list
-    for col in features:
-        for row in features.loc[features[col].isna(), col].index:
-            features[col][row] = []
+    features = feature_dataframe(families.index.values, directory, keys)
 
     # Preprocess datasets
     labels = families.family.unique()

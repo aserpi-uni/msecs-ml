@@ -5,7 +5,7 @@ def family_dataframe(directory):
     return pd.read_csv("{}/sha256_family.csv".format(directory))
 
 
-def feature_dataframe(sha256s, directory):
+def feature_dataframe(sha256s, directory, keys):
     # Create a list containing a DataFrame for each apk with its features
     features = []
     for i, sha256 in enumerate(sha256s):
@@ -29,7 +29,20 @@ def feature_dataframe(sha256s, directory):
         print("{} {}".format(i, sha256))
 
     # Join list elements in a single DataFrame
-    return pd.concat(features, ignore_index=True, sort=False).set_index("sha256")
+    features = pd.concat(features, ignore_index=True, sort=False).set_index("sha256")
+
+    # Select only relevant features
+    if keys:
+        features = features[keys]
+
+    # Replace NaNs with empty list
+    # Can't use fillna() because it doesn't accept lists
+    # Can't use regex because list is an unhashable type
+    for col in features:
+        for row in features.loc[features[col].isna(), col].index:
+            features[col][row] = []
+
+    return features
 
 
 def one_hot_encode(enc, features, keys):
