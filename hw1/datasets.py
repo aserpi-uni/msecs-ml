@@ -22,7 +22,7 @@ def feature_dataframe(sha256s, directory, keys):
                     single_apk.append({'feature_type': split_row[0], 'feature_value': split_row[1]},
                                       ignore_index=True)
 
-        single_apk = single_apk.groupby("feature_type")["feature_value"].apply(list).to_frame().transpose()
+        single_apk = single_apk.dropna().groupby("feature_type")["feature_value"].apply(list).to_frame().transpose()
         single_apk["sha256"] = [sha256]
         features.append(single_apk)
 

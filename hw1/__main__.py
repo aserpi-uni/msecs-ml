@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 
 from sklearn.preprocessing import MultiLabelBinarizer
 
@@ -30,6 +31,28 @@ def family_classification(directory, directory_results, algorithms, keys):
         print_heatmap(confusion_matrices[alg], alg, directory_results, labels)
 
 
+def malware_classification(directory, directory_results, algorithms, keys):
+    malwares = family_dataframe(directory).set_index("sha256").sort_index()
+    features = feature_dataframe(sorted(os.listdir("{}/feature_vectors".format(directory))), directory, keys)
+
+    # Preprocess datasets
+    malwares["family"] = "Malware"
+    malwares = malwares.reindex(features.index, fill_value="Safe").rename(columns={"family": "malware"})
+    labels = ["Safe", "Malware"]
+    X = one_hot_encode(MultiLabelBinarizer(), features, features.columns)
+    y = malwares.malware.ravel()
+
+    scores, confusion_matrices = evaluate(X, y, algorithms)
+
+    # Save scores
+    with open("{}/scores".format(directory_results), "w") as fout:
+        json.dump(scores, fout, indent=4, sort_keys=True)
+
+    # Print confusion matrices
+    for alg in scores:
+        print_heatmap(confusion_matrices[alg], alg, directory_results, labels)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -47,7 +70,7 @@ if __name__ == "__main__":
         args["algorithms"] = ["bernoulli", "random_forest", "svc", "linear_svc"]
 
     if args["classifier"] == "malware":
-        pass  # TODO
+        malware_classification(args["drebin"], args["output"], args["algorithms"], args["features"])
     elif args["classifier"] == "family":
         family_classification(args["drebin"], args["output"], args["algorithms"], args["features"])
     else:
