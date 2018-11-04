@@ -1,0 +1,670 @@
+{
+    "bernoulli": {
+        "accuracy": 0.7924764890282132,
+        "classification_report": {
+            "Adrd": {
+                "f1-score": 0.49586776859504134,
+                "precision": 1.0,
+                "recall": 0.32967032967032966,
+                "support": 91
+            },
+            "BaseBridge": {
+                "f1-score": 0.73542600896861,
+                "precision": 0.7256637168141593,
+                "recall": 0.7454545454545455,
+                "support": 330
+            },
+            "Boxer": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 27
+            },
+            "DroidDream": {
+                "f1-score": 0.8285714285714285,
+                "precision": 0.9830508474576272,
+                "recall": 0.7160493827160493,
+                "support": 81
+            },
+            "DroidKungFu": {
+                "f1-score": 0.8855291576673866,
+                "precision": 0.8518005540166205,
+                "recall": 0.9220389805097451,
+                "support": 667
+            },
+            "ExploitLinuxLotoor": {
+                "f1-score": 0.3333333333333333,
+                "precision": 0.75,
+                "recall": 0.21428571428571427,
+                "support": 70
+            },
+            "FakeDoc": {
+                "f1-score": 0.9961977186311787,
+                "precision": 1.0,
+                "recall": 0.9924242424242424,
+                "support": 132
+            },
+            "FakeInstaller": {
+                "f1-score": 0.7970253718285214,
+                "precision": 0.6693607641440118,
+                "recall": 0.9848648648648649,
+                "support": 925
+            },
+            "FakeRun": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 61
+            },
+            "Gappusin": {
+                "f1-score": 0.06557377049180328,
+                "precision": 0.6666666666666666,
+                "recall": 0.034482758620689655,
+                "support": 58
+            },
+            "Geinimi": {
+                "f1-score": 0.8658536585365854,
+                "precision": 0.9861111111111112,
+                "recall": 0.7717391304347826,
+                "support": 92
+            },
+            "GinMaster": {
+                "f1-score": 0.8205882352941177,
+                "precision": 0.8181818181818182,
+                "recall": 0.8230088495575221,
+                "support": 339
+            },
+            "Glodream": {
+                "f1-score": 0.35555555555555557,
+                "precision": 0.7619047619047619,
+                "recall": 0.2318840579710145,
+                "support": 69
+            },
+            "Hamob": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 28
+            },
+            "Iconosys": {
+                "f1-score": 0.7952755905511811,
+                "precision": 0.9901960784313726,
+                "recall": 0.6644736842105263,
+                "support": 152
+            },
+            "Imlog": {
+                "f1-score": 0.08888888888888888,
+                "precision": 1.0,
+                "recall": 0.046511627906976744,
+                "support": 43
+            },
+            "Jifake": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 29
+            },
+            "Kmin": {
+                "f1-score": 0.9966101694915254,
+                "precision": 0.9932432432432432,
+                "recall": 1.0,
+                "support": 147
+            },
+            "MobileTx": {
+                "f1-score": 0.5,
+                "precision": 1.0,
+                "recall": 0.3333333333333333,
+                "support": 69
+            },
+            "Opfake": {
+                "f1-score": 0.6428571428571428,
+                "precision": 0.6133333333333333,
+                "recall": 0.6753670473083198,
+                "support": 613
+            },
+            "Plankton": {
+                "f1-score": 0.9959967974379503,
+                "precision": 0.9967948717948718,
+                "recall": 0.9952,
+                "support": 625
+            },
+            "SMSreg": {
+                "f1-score": 0.04545454545454545,
+                "precision": 0.3333333333333333,
+                "recall": 0.024390243902439025,
+                "support": 41
+            },
+            "SendPay": {
+                "f1-score": 0.8431372549019608,
+                "precision": 1.0,
+                "recall": 0.7288135593220338,
+                "support": 59
+            },
+            "Yzhc": {
+                "f1-score": 0.1951219512195122,
+                "precision": 1.0,
+                "recall": 0.10810810810810811,
+                "support": 37
+            },
+            "macro avg": {
+                "f1-score": 0.5534526811781779,
+                "precision": 0.7558183791847055,
+                "recall": 0.5142541858583849,
+                "support": 4785
+            },
+            "micro avg": {
+                "f1-score": 0.7924764890282132,
+                "precision": 0.7924764890282132,
+                "recall": 0.7924764890282132,
+                "support": 4785
+            },
+            "weighted avg": {
+                "f1-score": 0.7661305591965645,
+                "precision": 0.7981991914167422,
+                "recall": 0.7924764890282132,
+                "support": 4785
+            }
+        }
+    },
+    "linear_svc": {
+        "accuracy": 0.9763845350052247,
+        "classification_report": {
+            "Adrd": {
+                "f1-score": 0.9832402234636871,
+                "precision": 1.0,
+                "recall": 0.967032967032967,
+                "support": 91
+            },
+            "BaseBridge": {
+                "f1-score": 0.9631901840490796,
+                "precision": 0.9751552795031055,
+                "recall": 0.9515151515151515,
+                "support": 330
+            },
+            "Boxer": {
+                "f1-score": 0.2941176470588235,
+                "precision": 0.7142857142857143,
+                "recall": 0.18518518518518517,
+                "support": 27
+            },
+            "DroidDream": {
+                "f1-score": 0.9447852760736196,
+                "precision": 0.9390243902439024,
+                "recall": 0.9506172839506173,
+                "support": 81
+            },
+            "DroidKungFu": {
+                "f1-score": 0.9782445611402851,
+                "precision": 0.978978978978979,
+                "recall": 0.9775112443778111,
+                "support": 667
+            },
+            "ExploitLinuxLotoor": {
+                "f1-score": 0.832116788321168,
+                "precision": 0.8507462686567164,
+                "recall": 0.8142857142857143,
+                "support": 70
+            },
+            "FakeDoc": {
+                "f1-score": 0.9962264150943396,
+                "precision": 0.9924812030075187,
+                "recall": 1.0,
+                "support": 132
+            },
+            "FakeInstaller": {
+                "f1-score": 0.9804560260586319,
+                "precision": 0.9847328244274809,
+                "recall": 0.9762162162162162,
+                "support": 925
+            },
+            "FakeRun": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 61
+            },
+            "Gappusin": {
+                "f1-score": 0.9747899159663865,
+                "precision": 0.9508196721311475,
+                "recall": 1.0,
+                "support": 58
+            },
+            "Geinimi": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 92
+            },
+            "GinMaster": {
+                "f1-score": 0.9824046920821113,
+                "precision": 0.9766763848396501,
+                "recall": 0.9882005899705014,
+                "support": 339
+            },
+            "Glodream": {
+                "f1-score": 0.9635036496350365,
+                "precision": 0.9705882352941176,
+                "recall": 0.9565217391304348,
+                "support": 69
+            },
+            "Hamob": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 28
+            },
+            "Iconosys": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 152
+            },
+            "Imlog": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 43
+            },
+            "Jifake": {
+                "f1-score": 0.9310344827586207,
+                "precision": 0.9310344827586207,
+                "recall": 0.9310344827586207,
+                "support": 29
+            },
+            "Kmin": {
+                "f1-score": 0.9966101694915254,
+                "precision": 0.9932432432432432,
+                "recall": 1.0,
+                "support": 147
+            },
+            "MobileTx": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 69
+            },
+            "Opfake": {
+                "f1-score": 0.9705179282868527,
+                "precision": 0.9485981308411215,
+                "recall": 0.9934747145187602,
+                "support": 613
+            },
+            "Plankton": {
+                "f1-score": 0.9960095770151636,
+                "precision": 0.9936305732484076,
+                "recall": 0.9984,
+                "support": 625
+            },
+            "SMSreg": {
+                "f1-score": 0.8809523809523809,
+                "precision": 0.8604651162790697,
+                "recall": 0.9024390243902439,
+                "support": 41
+            },
+            "SendPay": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 59
+            },
+            "Yzhc": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 37
+            },
+            "macro avg": {
+                "f1-score": 0.9445083298936545,
+                "precision": 0.9608525207391164,
+                "recall": 0.9413514297221761,
+                "support": 4785
+            },
+            "micro avg": {
+                "f1-score": 0.9763845350052247,
+                "precision": 0.9763845350052247,
+                "recall": 0.9763845350052247,
+                "support": 4785
+            },
+            "weighted avg": {
+                "f1-score": 0.9749355045013597,
+                "precision": 0.9754590478575673,
+                "recall": 0.9763845350052247,
+                "support": 4785
+            }
+        }
+    },
+    "random_forest": {
+        "accuracy": 0.9696969696969697,
+        "classification_report": {
+            "Adrd": {
+                "f1-score": 0.9775280898876404,
+                "precision": 1.0,
+                "recall": 0.9560439560439561,
+                "support": 91
+            },
+            "BaseBridge": {
+                "f1-score": 0.96,
+                "precision": 0.975,
+                "recall": 0.9454545454545454,
+                "support": 330
+            },
+            "Boxer": {
+                "f1-score": 0.2857142857142857,
+                "precision": 0.625,
+                "recall": 0.18518518518518517,
+                "support": 27
+            },
+            "DroidDream": {
+                "f1-score": 0.9433962264150944,
+                "precision": 0.9615384615384616,
+                "recall": 0.9259259259259259,
+                "support": 81
+            },
+            "DroidKungFu": {
+                "f1-score": 0.9715568862275448,
+                "precision": 0.9701046337817638,
+                "recall": 0.9730134932533733,
+                "support": 667
+            },
+            "ExploitLinuxLotoor": {
+                "f1-score": 0.8125,
+                "precision": 0.896551724137931,
+                "recall": 0.7428571428571429,
+                "support": 70
+            },
+            "FakeDoc": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 132
+            },
+            "FakeInstaller": {
+                "f1-score": 0.97784981091302,
+                "precision": 0.9773218142548596,
+                "recall": 0.9783783783783784,
+                "support": 925
+            },
+            "FakeRun": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 61
+            },
+            "Gappusin": {
+                "f1-score": 0.9491525423728815,
+                "precision": 0.9333333333333333,
+                "recall": 0.9655172413793104,
+                "support": 58
+            },
+            "Geinimi": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 92
+            },
+            "GinMaster": {
+                "f1-score": 0.9348441926345609,
+                "precision": 0.8991825613079019,
+                "recall": 0.9734513274336283,
+                "support": 339
+            },
+            "Glodream": {
+                "f1-score": 0.9465648854961832,
+                "precision": 1.0,
+                "recall": 0.8985507246376812,
+                "support": 69
+            },
+            "Hamob": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 28
+            },
+            "Iconosys": {
+                "f1-score": 0.9967213114754099,
+                "precision": 0.9934640522875817,
+                "recall": 1.0,
+                "support": 152
+            },
+            "Imlog": {
+                "f1-score": 0.951219512195122,
+                "precision": 1.0,
+                "recall": 0.9069767441860465,
+                "support": 43
+            },
+            "Jifake": {
+                "f1-score": 0.9152542372881356,
+                "precision": 0.9,
+                "recall": 0.9310344827586207,
+                "support": 29
+            },
+            "Kmin": {
+                "f1-score": 0.9966101694915254,
+                "precision": 0.9932432432432432,
+                "recall": 1.0,
+                "support": 147
+            },
+            "MobileTx": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 69
+            },
+            "Opfake": {
+                "f1-score": 0.9712460063897764,
+                "precision": 0.9514866979655712,
+                "recall": 0.9918433931484503,
+                "support": 613
+            },
+            "Plankton": {
+                "f1-score": 0.9968051118210862,
+                "precision": 0.9952153110047847,
+                "recall": 0.9984,
+                "support": 625
+            },
+            "SMSreg": {
+                "f1-score": 0.8571428571428571,
+                "precision": 0.9166666666666666,
+                "recall": 0.8048780487804879,
+                "support": 41
+            },
+            "SendPay": {
+                "f1-score": 0.9830508474576272,
+                "precision": 0.9830508474576272,
+                "recall": 0.9830508474576272,
+                "support": 59
+            },
+            "Yzhc": {
+                "f1-score": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "support": 37
+            },
+            "macro avg": {
+                "f1-score": 0.9344648738717813,
+                "precision": 0.9571316394574886,
+                "recall": 0.9233567265366815,
+                "support": 4785
+            },
+            "micro avg": {
+                "f1-score": 0.9696969696969697,
+                "precision": 0.9696969696969697,
+                "recall": 0.9696969696969697,
+                "support": 4785
+            },
+            "weighted avg": {
+                "f1-score": 0.9681385497210471,
+                "precision": 0.9687093976756223,
+                "recall": 0.9696969696969697,
+                "support": 4785
+            }
+        }
+    },
+    "svc": {
+        "accuracy": 0.567189132706374,
+        "classification_report": {
+            "Adrd": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 91
+            },
+            "BaseBridge": {
+                "f1-score": 0.7867647058823529,
+                "precision": 1.0,
+                "recall": 0.6484848484848484,
+                "support": 330
+            },
+            "Boxer": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 27
+            },
+            "DroidDream": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 81
+            },
+            "DroidKungFu": {
+                "f1-score": 0.8093220338983049,
+                "precision": 0.7650200267022697,
+                "recall": 0.8590704647676162,
+                "support": 667
+            },
+            "ExploitLinuxLotoor": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 70
+            },
+            "FakeDoc": {
+                "f1-score": 0.9727626459143969,
+                "precision": 1.0,
+                "recall": 0.946969696969697,
+                "support": 132
+            },
+            "FakeInstaller": {
+                "f1-score": 0.5024443237370994,
+                "precision": 0.33550961189698947,
+                "recall": 1.0,
+                "support": 925
+            },
+            "FakeRun": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 61
+            },
+            "Gappusin": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 58
+            },
+            "Geinimi": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 92
+            },
+            "GinMaster": {
+                "f1-score": 0.46952595936794583,
+                "precision": 1.0,
+                "recall": 0.30678466076696165,
+                "support": 339
+            },
+            "Glodream": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 69
+            },
+            "Hamob": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 28
+            },
+            "Iconosys": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 152
+            },
+            "Imlog": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 43
+            },
+            "Jifake": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 29
+            },
+            "Kmin": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 147
+            },
+            "MobileTx": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 69
+            },
+            "Opfake": {
+                "f1-score": 0.40364583333333337,
+                "precision": 1.0,
+                "recall": 0.2528548123980424,
+                "support": 613
+            },
+            "Plankton": {
+                "f1-score": 0.9464012251148546,
+                "precision": 0.9074889867841409,
+                "recall": 0.9888,
+                "support": 625
+            },
+            "SMSreg": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 41
+            },
+            "SendPay": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 59
+            },
+            "Yzhc": {
+                "f1-score": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "support": 37
+            },
+            "macro avg": {
+                "f1-score": 0.20378611363534535,
+                "precision": 0.250334109390975,
+                "recall": 0.20845685347446521,
+                "support": 4785
+            },
+            "micro avg": {
+                "f1-score": 0.567189132706374,
+                "precision": 0.567189132706374,
+                "recall": 0.567189132706374,
+                "support": 4785
+            },
+            "weighted avg": {
+                "f1-score": 0.49962816719429765,
+                "precision": 0.5855371714848939,
+                "recall": 0.567189132706374,
+                "support": 4785
+            }
+        }
+    }
+}
