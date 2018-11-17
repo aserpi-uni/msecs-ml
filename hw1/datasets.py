@@ -48,5 +48,8 @@ def feature_dataframe(sha256s, directory, keys):
 def one_hot_encode(enc, features, keys):
     binaries = []
     for key in keys:
-        binaries.append(pd.DataFrame(enc.fit_transform(features[key])))
-    return pd.concat(binaries, axis=1)
+        print("Binarizing {}...".format(key), end="\t")
+        binaries.append(pd.SparseDataFrame(enc(sparse_output=True).fit_transform(features[key])))
+        del features[key]
+        print("Done")
+    return pd.concat(binaries, axis=1).fillna(0)
