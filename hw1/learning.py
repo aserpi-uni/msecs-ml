@@ -13,7 +13,7 @@ def learn(X, y, algs, out):
         # X is too big to fit in memory: partial fits
         if len(X) * len(X.columns) > 50000:
             for i in range(0, len(y), 5000):
-                clf.partial_fit(X[i:i+5000], y[i:i+5000], classes=classes)
+                clf.partial_fit(X[i:i+4999], y[i:i+4999], classes=classes)
 
         # X fits in memory: direct computation
         else:
