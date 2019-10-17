@@ -4,11 +4,10 @@ import pandas as pd
 import seaborn as sn
 
 from matplotlib import rc
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.model_selection import cross_val_predict, KFold
-from sklearn.naive_bayes import BernoulliNB
-from sklearn.svm import SVC, LinearSVC
+
+from hw1.classifiers import classifier
 
 
 def evaluate(X, y, algs):
@@ -17,16 +16,7 @@ def evaluate(X, y, algs):
     scores = {}
 
     for alg in algs:
-        if "bernoulli" == alg:
-            clf = BernoulliNB()
-        elif "random_forest" == alg:
-            clf = RandomForestClassifier(n_estimators=20, verbose=2)
-        elif "svc" == alg:
-            clf = SVC(verbose=2)
-        elif "linear_svc" == alg:
-            clf = LinearSVC(max_iter=5000, verbose=2)
-        else:
-            raise KeyError("Unknown algorithm: {}".format(alg))
+        clf = classifier(alg)
 
         # X is too big to fit in memory: partial fits
         pred = []
