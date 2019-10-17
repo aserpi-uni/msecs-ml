@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import pandas as pd
 
 from sklearn.preprocessing import MultiLabelBinarizer
 
@@ -18,7 +19,7 @@ def family_classification(action, directory, directory_results, algorithms, keys
     features = feature_dataframe(families.index.values, directory, keys)
 
     # Preprocess datasets
-    labels = families.family.unique()
+    labels = pd.unique(families.family)
     X = one_hot_encode(MultiLabelBinarizer, features, features.columns)
     y = families.family.ravel()
 

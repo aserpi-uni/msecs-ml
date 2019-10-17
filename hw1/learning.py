@@ -1,10 +1,11 @@
+import pandas as pd
 import pickle
 
 from hw1.classifiers import classifier
 
 
 def learn(X, y, algs, out):
-    classes = y.unique()
+    classes = pd.unique(y)
 
     for alg in algs:
         clf = classifier(alg)

@@ -11,7 +11,7 @@ from hw1.classifiers import classifier
 
 
 def evaluate(X, y, algs):
-    classes = y.unique()
+    classes = pd.unique(y)
     confusion_matrices = {}
     scores = {}
 
