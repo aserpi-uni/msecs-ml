@@ -18,4 +18,4 @@ def learn(X, y, algs, out):
         else:
             clf.fit(X, y)
 
-        pickle.dump(clf, "{}/{}.zip".format(out, alg), protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(clf, f"{out}/{alg}.zip", protocol=pickle.HIGHEST_PROTOCOL)

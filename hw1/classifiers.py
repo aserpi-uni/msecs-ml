@@ -13,5 +13,5 @@ def classifier(alg):
     elif "linear_svc" == alg:
         clf = LinearSVC(max_iter=5000, verbose=2)
     else:
-        raise KeyError("Unknown algorithm: {}".format(alg))
+        raise KeyError(f"Unknown algorithm: {alg}")
     return clf

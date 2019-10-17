@@ -30,7 +30,7 @@ def family_classification(action, directory, directory_results, algorithms, keys
         scores, confusion_matrices = evaluate(X, y, algorithms)
 
         # Save scores
-        with open("{}/scores".format(directory_results), "w") as fout:
+        with open(f"{directory_results}/scores", "w") as fout:
             json.dump(scores, fout, indent=4, sort_keys=True)
 
         # Print confusion matrices
@@ -46,7 +46,7 @@ def family_classification(action, directory, directory_results, algorithms, keys
 
 def malware_classification(action, directory, directory_results, algorithms, keys):
     malwares = family_dataframe(directory).set_index("sha256").sort_index()
-    features = feature_dataframe(sorted(os.listdir("{}/feature_vectors".format(directory))), directory, keys)
+    features = feature_dataframe(sorted(os.listdir(f"{directory}/feature_vectors")), directory, keys)
 
     # Preprocess datasets
     malwares["family"] = "Malware"
@@ -62,7 +62,7 @@ def malware_classification(action, directory, directory_results, algorithms, key
         scores, confusion_matrices = evaluate(X, y, algorithms)
 
         # Save scores
-        with open("{}/scores".format(directory_results), "w") as fout:
+        with open(f"{directory_results}/scores", "w") as fout:
             json.dump(scores, fout, indent=4, sort_keys=True)
 
         # Print confusion matrices

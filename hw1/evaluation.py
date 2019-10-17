@@ -22,18 +22,18 @@ def evaluate(X, y, algs):
         pred = []
         if len(X)*len(X.columns) > 50000**2:
             batches = 39
-            print("Evaluating {}".format(alg))
+            print(f"Evaluating {alg}")
 
             kf = KFold(n_splits=5, shuffle=True)
             for idx_kfold, (train_index, test_index) in enumerate(kf.split(X)):
-                print("\nKFold iteration {}".format(idx_kfold))
+                print(f"\nKFold iteration {idx_kfold}")
                 x_train, x_test = X.iloc[train_index], X.iloc[test_index]
                 y_train, y_test = y[train_index], y[test_index]
 
                 for idx in range(0, batches - 1):
                     idx_start = int((len(X)/batches)*idx)
                     idx_finish = int((len(X)/batches)*(idx + 1))
-                    print("Slicing batch {}: from {} to {}".format(idx, idx_start, idx_finish))
+                    print(f"Slicing batch {idx}: from {idx_start} to {idx_finish}")
 
                     X_train_batch = x_train.iloc[idx_start:idx_finish - 1]
                     y_train_batch = y_train[idx_start:idx_finish - 1]
@@ -41,18 +41,18 @@ def evaluate(X, y, algs):
                     if len(y_train_batch) == 0:
                         continue
 
-                    print("Fitting batch {}".format(idx))
+                    print(f"Fitting batch {idx}")
 
                     clf.partial_fit(X_train_batch, y_train_batch, classes=classes)
 
-                print("Predicting KFold {}".format(idx_kfold))
+                print(f"Predicting KFold {idx_kfold}")
                 pred.append(pd.Series(clf.predict(x_test)))
 
             pred = pd.concat(pred)
 
         # X fits in memory: direct computation
         else:
-            print("Evaluating {}...".format(alg), end="\t")
+            print(f"Evaluating {alg}...", end="\t")
             pred = cross_val_predict(clf, X, y, cv=5, n_jobs=1, pre_dispatch="n_jobs", verbose=2)
 
         scores[alg], confusion_matrices[alg] = __evaluate_algorithm(y, pred)
@@ -65,7 +65,7 @@ def print_heatmap(cf, algorithm, directory, labels=None):
     plt.figure(figsize=(34, 30), dpi=400)
     sn.heatmap(cf.applymap(lambda cell: 0 if cell == 0 else np.log10(cell)), annot=True, square=True,
                xticklabels=labels, yticklabels=labels) \
-        .get_figure().savefig("{}/heatmap_{}".format(directory, algorithm), dpi=400, format="pdf")
+        .get_figure().savefig(f"{directory}/heatmap_{algorithm}", dpi=400, format="pdf")
     plt.clf()
 
 
