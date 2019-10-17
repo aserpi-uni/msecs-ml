@@ -11,7 +11,7 @@ def learn(X, y, algs, out):
         clf = classifier(alg)
 
         # X is too big to fit in memory: partial fits
-        if len(X) * len(X.columns) > 50000 ** 2:
+        if len(X) * len(X.columns) > 50000:
             for i in range(0, len(y), 5000):
                 clf.partial_fit(X[i:i+5000], y[i:i+5000], classes=classes)
 

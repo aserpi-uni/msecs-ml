@@ -20,7 +20,7 @@ def evaluate(X, y, algs):
 
         # X is too big to fit in memory: partial fits
         pred = []
-        if len(X)*len(X.columns) > 50000**2:
+        if len(X) * len(X.columns) > 50000:
             batches = 39
             print(f"Evaluating {alg}")
 
