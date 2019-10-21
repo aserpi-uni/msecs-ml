@@ -1,9 +1,8 @@
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from matplotlib import rc
 import numpy as np
 import pandas as pd
 import seaborn as sn
-
-from matplotlib import rc
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.model_selection import cross_val_predict, KFold
 
