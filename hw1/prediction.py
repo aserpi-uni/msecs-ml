@@ -1,16 +1,15 @@
+from contextlib import suppress
 import os
 import pickle
-import pandas as pd
-from sklearn.preprocessing import MultiLabelBinarizer
-
-from hw1.datasets import feature_dataframe, one_hot_encode
 
 
-def predict(directory, directory_results, algorithms, keys):
-    features = feature_dataframe(sorted(os.listdir(f"{directory}/feature_vectors")), directory, keys)
-    X = one_hot_encode(MultiLabelBinarizer, features, features.columns)
-    del features
-
+def predict(X, dataset_dir, results_dir, algorithms):
     for alg in algorithms:
-        classifier = pickle.load(f"{directory}/classifiers/{alg}")
-        pd.Series(classifier.predict(X)).to_pickle(f"{directory_results}/{alg}.zip")
+        pred = pickle.load(f"{dataset_dir}/classifiers/{alg}").predict(X)
+
+        pred.to_pickle(f"{results_dir}/{alg}.zip")  # TODO: remove
+        with suppress(FileNotFoundError):
+            os.remove(f"{results_dir}/{alg}.csv")
+        with open(f"{results_dir}/{alg}.csv", "a") as fout:
+            for i in pred:
+                print(pred[i].replace("-", ","), file=fout)
