@@ -10,10 +10,10 @@ def learn(X, y, algs, out):
 
     for alg in algs:
         print(f"\nFitting {alg}...", end="\t")
-        clf = classifier(alg)
+        clf, partial_fit = classifier(alg)
 
         # X is too big to fit in memory: partial fits
-        if alg == "bernoulli" and len(X) * len(X.columns) > 350000000:
+        if partial_fit and len(X) * len(X.columns) > 350000000:
             try:
                 with open(f"{out}/{alg}_batch.zip", "rb") as fin_batch, \
                         open(f"{out}/{alg}.zip", "rb") as fin_classifier:
