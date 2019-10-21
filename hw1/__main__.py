@@ -1,7 +1,8 @@
 import argparse
 import json
 import os
-
+import pandas as pd
+import pickle
 from sklearn.preprocessing import MultiLabelBinarizer
 
 from hw1.datasets import family_dataframe, feature_dataframe, one_hot_encode
@@ -11,26 +12,42 @@ from hw1.prediction import predict
 
 
 def family_classification(action, directory, directory_results, algorithms, keys):
-    # Get a DataFrame containing only malwares in large families
-    families = family_dataframe(directory).groupby("family").filter(lambda f: len(f) > 20) \
-        .set_index("sha256").sort_index()
+    try:
+        with open(f"{directory}/X_family.zip", "rb") as fin_X, \
+                open(f"{directory}/y_family.zip", "rb") as fin_y, \
+                open(f"{directory}/labels_family.zip", "rb") as fin_labels:
+            X = pickle.load(fin_X)
+            y = pickle.load(fin_y)
+            labels = pickle.load(fin_labels)
 
-    features = feature_dataframe(families.index.values, directory, keys)
+    except (FileNotFoundError, TypeError):
+        # Get a DataFrame containing only malware in large families
+        families = family_dataframe(directory).groupby("family").filter(lambda f: len(f) > 20) \
+            .set_index("sha256").sort_index()
 
-    # Preprocess datasets
-    labels = families.family.unique()
-    X = one_hot_encode(MultiLabelBinarizer, features, features.columns)
-    y = families.family.ravel()
+        features = feature_dataframe(families.index.values, directory, keys)
 
-    # Delete unnecessary data structures
-    del families
-    del features
+        # Preprocess datasets
+        labels = pd.unique(families.family)
+        X = one_hot_encode(MultiLabelBinarizer, features, features.columns)
+        y = families.family.ravel()
+
+        # Delete unnecessary data structures
+        del families
+        del features
+
+        with open(f"{directory}/X_family.zip", "wb") as fout_X:
+            pickle.dump(X, fout_X, protocol=pickle.HIGHEST_PROTOCOL)
+        with open(f"{directory}/y_family.zip", "wb") as fout_y:
+            pickle.dump(y, fout_y, protocol=pickle.HIGHEST_PROTOCOL)
+        with open(f"{directory}/labels_family.zip", "wb") as fout_labels:
+            pickle.dump(labels, fout_labels, protocol=pickle.HIGHEST_PROTOCOL)
 
     if action == "evaluate":
         scores, confusion_matrices = evaluate(X, y, algorithms)
 
         # Save scores
-        with open("{}/scores".format(directory_results), "w") as fout:
+        with open(f"{directory_results}/scores", "w") as fout:
             json.dump(scores, fout, indent=4, sort_keys=True)
 
         # Print confusion matrices
@@ -45,24 +62,36 @@ def family_classification(action, directory, directory_results, algorithms, keys
 
 
 def malware_classification(action, directory, directory_results, algorithms, keys):
-    malwares = family_dataframe(directory).set_index("sha256").sort_index()
-    features = feature_dataframe(sorted(os.listdir("{}/feature_vectors".format(directory))), directory, keys)
+    try:
+        with open(f"{directory}/X_malware.zip", "rb") as fin_X, \
+                open(f"{directory}/y_malware.zip", "rb") as fin_y:
+            X = pickle.load(fin_X)
+            y = pickle.load(fin_y)
 
-    # Preprocess datasets
-    malwares["family"] = "Malware"
-    malwares = malwares.rename(columns={"family": "malware"}).reindex(features.index, fill_value="Safe")
-    X = one_hot_encode(MultiLabelBinarizer, features, features.columns)
-    y = malwares.malware.ravel()
+    except (FileNotFoundError, TypeError):
+        malwares = family_dataframe(directory).set_index("sha256").sort_index()
+        features = feature_dataframe(sorted(os.listdir(f"{directory}/feature_vectors")), directory, keys)
 
-    # Delete unnecessary data structures
-    del malwares
-    del features
+        # Preprocess datasets
+        malwares["family"] = "Malware"
+        malwares = malwares.rename(columns={"family": "malware"}).reindex(features.index, fill_value="Safe")
+        X = one_hot_encode(MultiLabelBinarizer, features, features.columns)
+        y = malwares.malware.ravel()
+
+        # Delete unnecessary data structures
+        del malwares
+        del features
+
+        with open(f"{directory}/X_malware.zip", "wb") as fout_X:
+            pickle.dump(X, fout_X, protocol=pickle.HIGHEST_PROTOCOL)
+        with open(f"{directory}/y_malware.zip", "wb") as fout_y:
+            pickle.dump(y, fout_y, protocol=pickle.HIGHEST_PROTOCOL)
 
     if action == "evaluate":
         scores, confusion_matrices = evaluate(X, y, algorithms)
 
         # Save scores
-        with open("{}/scores".format(directory_results), "w") as fout:
+        with open(f"{directory_results}/scores", "w") as fout:
             json.dump(scores, fout, indent=4, sort_keys=True)
 
         # Print confusion matrices
