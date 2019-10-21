@@ -1,55 +1,43 @@
 import pandas as pd
+import pickle
+from sklearn.preprocessing import MultiLabelBinarizer
 
 
-def family_dataframe(directory):
-    return pd.read_csv(f"{directory}/sha256_family.csv")
+def labels():
+    return ["clang-HIGH", "clang-LOW", "icc-HIGH", "icc-LOW", "gcc-HIGH", "gcc-LOW"]
 
 
-def feature_dataframe(sha256s, directory, keys):
-    # Create a list containing a DataFrame for each apk with its features
-    features = []
-    for i, sha256 in enumerate(sha256s):
-        try:
-            single_apk = pd.read_csv(f"{directory}/feature_vectors/{sha256}", sep="::", header=None,
-                                     names=["feature_type", "feature_value"])
+def training_datasets(dataset_dir, cache=False):
+    try:
+        with open(f"{dataset_dir}/X.zip", "rb") as fin_X, \
+                open(f"{dataset_dir}/y.zip", "rb") as fin_y:
+            X = pickle.load(fin_X)
+            y = pickle.load(fin_y)
 
-        # There is a malformed string, i.e. that contains "::"
-        except pd.errors.ParserError:
-            single_apk = pd.DataFrame(columns=["feature_type", "feature_value"])
-            with open(f"{directory}/feature_vectors/{sha256}") as fin:
-                for row in fin:
-                    split_row = row.split("::", 1)
-                    single_apk.append({'feature_type': split_row[0], 'feature_value': split_row[1]},
-                                      ignore_index=True)
+    except (FileNotFoundError, TypeError):
+        with open(f"{dataset_dir}/dataset.json") as fin:  # TODO
+            data = pd.read_json(fin)
+        X = MultiLabelBinarizer().fit_transform(data["instructions"])
+        y = data.apply(lambda fun: f"{fun['compiler']}-{fun['optimization']}", axis=1)
 
-        single_apk = single_apk.dropna().groupby("feature_type")["feature_value"].apply(list).to_frame().transpose()
-        single_apk["sha256"] = [sha256]
-        features.append(single_apk)
+        if cache:
+            with open(f"{dataset_dir}/X.zip", "wb") as fout_X, \
+                    open(f"{dataset_dir}/y.zip", "wb") as fout_y:
+                pickle.dump(X, fout_X)
+                pickle.dump(y, fout_y)
 
-        print(f"{i} {sha256}")
-
-    # Join list elements in a single DataFrame
-    features = pd.concat(features, ignore_index=True, sort=False).set_index("sha256")
-
-    # Select only relevant features
-    if keys:
-        features = features[keys]
-
-    # Replace NaNs with empty list
-    # Can't use fillna() because it doesn't accept lists
-    # Can't use regex because list is an unhashable type
-    for col in features:
-        for row in features.loc[features[col].isna(), col].index:
-            features[col][row] = []
-
-    return features
+    return X, y
 
 
-def one_hot_encode(enc, features, keys):
-    binaries = []
-    for key in keys:
-        print(f"Binarizing {key}...", end="\t")
-        binaries.append(pd.SparseDataFrame(enc(sparse_output=True).fit_transform(features[key])))
-        del features[key]
-        print("Done")
-    return pd.concat(binaries, axis=1).fillna(0)
+def test_dataset(dataset_dir):
+    try:
+        with open(f"{dataset_dir}/X.zip", "rb") as fin_X:
+            X_train = pickle.load(fin_X)
+    except (FileNotFoundError, TypeError):
+        with open(f"{dataset_dir}/dataset.json") as fin:  # TODO
+            X_train = MultiLabelBinarizer().fit_transform(pd.read_json(fin)["instructions"])
+    
+    with open(f"{dataset_dir}/dataset.json") as fin:  # TODO
+        X = MultiLabelBinarizer(classes=X_train.classes_).fit_transform(pd.read_json(fin)["instructions"])
+
+    return X
