@@ -9,15 +9,16 @@ from sklearn.model_selection import cross_val_predict, KFold
 from hw1.classifiers import classifier
 
 
-def evaluate(X, y, algs):
-    classes = pd.unique(y)
+def evaluate(X, y, algs, classes=None):
+    if not classes:
+        classes = pd.unique(y)
     confusion_matrices = {}
     scores = {}
 
     for alg in algs:
         clf, partial_fit = classifier(alg)
 
-        # X is too big to fit in memory: partial fits
+        # X is too big to fit in memory and the algorithm supports partial fits
         pred = []
         if partial_fit and len(X) * len(X.columns) > 350000000:
             batches = int(len(X) / 645)
@@ -48,7 +49,6 @@ def evaluate(X, y, algs):
 
             pred = pd.concat(pred)
 
-        # X fits in memory: direct computation
         else:
             print(f"Evaluating {alg}...", end="\t")
             pred = cross_val_predict(clf, X, y, cv=5, n_jobs=1, pre_dispatch="n_jobs", verbose=2)
