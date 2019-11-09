@@ -1,55 +1,83 @@
 import pandas as pd
+import pickle
 
 
-def family_dataframe(directory):
-    return pd.read_csv(f"{directory}/sha256_family.csv")
+# 0: missing value
+# 1: unknown instruction
+# >1: known value
+def __x(data, features=None, truncate=None, return_features=False):
+    if features:
+        for fun_idx, fun in enumerate(data):
+            if truncate:  # and len(fun) > truncate * 2:
+                fun = fun[:truncate] + fun[-truncate:]
+                data[fun_idx] = fun
+            for instr_idx, instr in enumerate(fun):
+                instr = instr.split(" ", 1)[0]
+                try:
+                    fun[instr_idx] = features[instr]
+                except KeyError:
+                    fun[instr_idx] = 1
+
+    else:
+        instructions = {}
+        max_id = 1
+        for fun_idx, fun in enumerate(data):
+            if truncate:  # and len(fun) > truncate * 2:
+                fun = fun[:truncate] + fun[-truncate:]
+                data[fun_idx] = fun
+            for instr_idx, instr in enumerate(fun):
+                instr = instr.split(" ")[0]
+                try:
+                    fun[instr_idx] = instructions[instr]
+                except KeyError:
+                    max_id += 1
+                    instructions[instr] = max_id
+                    fun[instr_idx] = instructions[instr]
+
+    df = pd.DataFrame.from_records(data).fillna(0)
+    if return_features:
+        return df, (features if features else instructions)
+    else:
+        return df
 
 
-def feature_dataframe(sha256s, directory, keys):
-    # Create a list containing a DataFrame for each apk with its features
-    features = []
-    for i, sha256 in enumerate(sha256s):
-        try:
-            single_apk = pd.read_csv(f"{directory}/feature_vectors/{sha256}", sep="::", header=None,
-                                     names=["feature_type", "feature_value"])
-
-        # There is a malformed string, i.e. that contains "::"
-        except pd.errors.ParserError:
-            single_apk = pd.DataFrame(columns=["feature_type", "feature_value"])
-            with open(f"{directory}/feature_vectors/{sha256}") as fin:
-                for row in fin:
-                    split_row = row.split("::", 1)
-                    single_apk.append({'feature_type': split_row[0], 'feature_value': split_row[1]},
-                                      ignore_index=True)
-
-        single_apk = single_apk.dropna().groupby("feature_type")["feature_value"].apply(list).to_frame().transpose()
-        single_apk["sha256"] = [sha256]
-        features.append(single_apk)
-
-        print(f"{i} {sha256}")
-
-    # Join list elements in a single DataFrame
-    features = pd.concat(features, ignore_index=True, sort=False).set_index("sha256")
-
-    # Select only relevant features
-    if keys:
-        features = features[keys]
-
-    # Replace NaNs with empty list
-    # Can't use fillna() because it doesn't accept lists
-    # Can't use regex because list is an unhashable type
-    for col in features:
-        for row in features.loc[features[col].isna(), col].index:
-            features[col][row] = []
-
-    return features
+def labels(classifier):
+    if classifier == "compiler":
+        return ["clang", "icc", "gcc"]
+    elif classifier == "opt":
+        return ["H", "L"]
 
 
-def one_hot_encode(enc, features, keys):
-    binaries = []
-    for key in keys:
-        print(f"Binarizing {key}...", end="\t")
-        binaries.append(pd.SparseDataFrame(enc(sparse_output=True).fit_transform(features[key])))
-        del features[key]
-        print("Done")
-    return pd.concat(binaries, axis=1).fillna(0)
+def train_datasets(dataset_dir, classifier, cache=False, truncate=None):
+    try:
+        with open(f"{dataset_dir}/x_{truncate}.zip", "rb") as fin_X, \
+                open(f"{dataset_dir}/y_{classifier}.zip", "rb") as fin_y:
+            x = pickle.load(fin_X)
+            y = pickle.load(fin_y)
+
+    except (FileNotFoundError, TypeError):
+        data = pd.read_json(f"{dataset_dir}/train_dataset.jsonl", lines=True)
+        x, features = __x(data["instructions"], return_features=True, truncate=truncate)
+        y = data[classifier]
+
+        if cache:
+            with open(f"{dataset_dir}/x_{truncate}.zip", "wb") as fout_X, \
+                    open(f"{dataset_dir}/y_{classifier}.zip", "wb") as fout_y, \
+                    open(f"{dataset_dir}/features_{truncate}.zip", "wb") as fout_features:
+                pickle.dump(x, fout_X, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(y, fout_y, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(features, fout_features, protocol=pickle.HIGHEST_PROTOCOL)
+
+    return x, y
+
+
+def test_dataset(dataset_dir, truncate=None):
+    try:
+        with open(f"{dataset_dir}/features_{truncate}.zip", "rb") as fin_features:
+            features = pickle.load(fin_features)
+    except (FileNotFoundError, TypeError):
+        x_train, features = __x(pd.read_json(f"{dataset_dir}/train_dataset.jsonl", lines=True)["instructions"],
+                                truncate=truncate, return_features=True)
+
+    return __x(pd.read_json(f"{dataset_dir}/test_dataset_blind.jsonl", lines=True)["instructions"],
+               features=features, truncate=truncate)
