@@ -6,7 +6,7 @@ from sklearn.svm import SVC, LinearSVC
 def classifier(alg):
     if "naive_bayes" == alg:
         clf = MultinomialNB()
-        partial_fit = True
+        partial_fit = False
     elif "random_forest" == alg:
         clf = RandomForestClassifier(n_estimators=100, verbose=1)
         partial_fit = False

@@ -41,6 +41,23 @@ def __x(data, features=None, truncate=None, return_features=False):
         return df
 
 
+# `**kwargs` left only for retro-compatibility
+def __x_tfidf(data, features=None, return_features=False, **kwargs):
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    data = data.apply(lambda f: " ".join([i.split(" ", 1)[0] for i in f]))
+
+    if features:
+        df = features.transform(data)
+    else:
+        features = TfidfVectorizer(ngram_range=(1, 5))
+        df = features.fit_transform(data)
+
+    if return_features:
+        return df, features
+    else:
+        return df
+
+
 def labels(classifier):
     if classifier == "compiler":
         return ["clang", "icc", "gcc"]
@@ -76,8 +93,8 @@ def test_dataset(dataset_dir, truncate=None):
         with open(f"{dataset_dir}/features_{truncate}.zip", "rb") as fin_features:
             features = pickle.load(fin_features)
     except (FileNotFoundError, TypeError):
-        x_train, features = __x(pd.read_json(f"{dataset_dir}/train_dataset.jsonl", lines=True)["instructions"],
-                                truncate=truncate, return_features=True)
+        x_train, features = __x_tfidf(pd.read_json(f"{dataset_dir}/train_dataset.jsonl", lines=True)["instructions"],
+                                      truncate=truncate, return_features=True)
 
     return __x(pd.read_json(f"{dataset_dir}/test_dataset_blind.jsonl", lines=True)["instructions"],
                features=features, truncate=truncate)
