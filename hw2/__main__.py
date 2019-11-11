@@ -39,25 +39,26 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Required arguments
-    parser.add_argument("-b", "--batch-size", help="batch size")
-    parser.add_argument("-d", "--work-dir", help="working directory")
-    parser.add_argument("-e", "--epochs", help="epochs")
-    parser.add_argument("-n", "--net", help="neural network")
+    parser.add_argument("net", choices=["inception", "resnet50", "vgg16"], help="neural network")
+    parser.add_argument("epochs", help="epochs", type=int)
+    parser.add_argument("working_directory", help="working directory")
 
     # Optional arguments
-    parser.add_argument("-i", "--initialize", action="store_true", help="initialize working directory")
-    parser.add_argument("-p", "--persistence", help="save models", nargs="*")
+
+    parser.add_argument("-b", "--batch-size", help="batch size", type=int)
+    parser.add_argument("-i", "--initialise", action="store_true", help="initialise working directory")
+    parser.add_argument("-p", "--persistence", choices=["all", "best", "last"], help="save models", nargs="?")
     parser.add_argument("-s", "--stats", action="store_true", help="display statistics")
 
     args = vars(parser.parse_args())
 
-    if args["initialize"]:
-        initialize_dir(args["work_dir"])
+    if args["initialise"]:
+        initialize_dir(args["working_directory"])
 
     tune(ImageSize(240, 800),
-         args["work_dir"],
+         args["working_directory"],
          args["net"],
-         int(args["epochs"]),
-         int(args["batch_size"]),
+         args["epochs"],
+         args["batch_size"],
          args["stats"],
-         args["persistence"][0] if args["persistence"] else None)
+         args["persistence"])

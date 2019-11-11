@@ -10,15 +10,13 @@ from natsort import natsorted
 from pathlib import Path
 
 
-def tune(image_size, work_dir, net, epochs, batch_size, evaluate, persistence):
+def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, persistence=None):
     try:
         model_name = natsorted(list(Path(f"{work_dir}/keras").glob(f"{net}-*.h5")))[-1]
         model = load_model(model_name.as_posix())  # Fixed in next Keras release
         print(f"Loaded model {model_name}")
 
     except IndexError:
-        model_name = Path(f"{net}-0.h5")
-
         if net == "inception":
             from hw2.models import inception
             model = inception(image_size)
@@ -29,7 +27,9 @@ def tune(image_size, work_dir, net, epochs, batch_size, evaluate, persistence):
             from hw2.models import vgg16
             model = vgg16(image_size)
         else:
-            raise ArgumentError("Unknown network")
+            raise ArgumentError(f"Unknown network '{net}'")
+
+        model_name = Path(f"{net}-0.h5")
 
     # Show model summary
     model.summary()
@@ -74,7 +74,7 @@ def tune(image_size, work_dir, net, epochs, batch_size, evaluate, persistence):
         elif persistence == "last":
             model_checkpoint = ModelCheckpoint(f"{work_dir}/keras/{net}.h5", period=1, verbose=1)
         else:
-            raise ArgumentError("Unknown persistence option")
+            raise ArgumentError(f"Unknown persistence option '{persistence}'")
         callbacks_list = [history_checkpoint, model_checkpoint]
     else:
         callbacks_list = [history_checkpoint]
