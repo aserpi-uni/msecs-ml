@@ -19,14 +19,14 @@ def tune(image_size, work_dir, net, epochs, batch_size, evaluate, persistence):
     except IndexError:
         model_name = Path(f"{net}-0.h5")
 
-        if net == "inceptionv3":
-            from hw2.models.inceptionv3 import inceptionv3
-            model = inceptionv3(image_size)
+        if net == "inception":
+            from hw2.models import inception
+            model = inception(image_size)
         elif net == "resnet50":
-            from hw2.models.resnet50 import resnet50
+            from hw2.models import resnet50
             model = resnet50(image_size)
         elif net == "vgg16":
-            from hw2.models.vgg16 import vgg16
+            from hw2.models import vgg16
             model = vgg16(image_size)
         else:
             raise ArgumentError("Unknown network")
