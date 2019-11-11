@@ -34,29 +34,24 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, per
     model.summary()
 
     # Read images and augment data
-    train_datagen = ImageDataGenerator(
-        fill_mode="nearest",
-        height_shift_range=0.2,
-        horizontal_flip=True,
-        rescale=1./255,
-        rotation_range=20,
-        shear_range=0.2,
-        width_shift_range=0.2)
+    train_datagen = ImageDataGenerator(fill_mode="nearest",
+                                       height_shift_range=0.2,
+                                       horizontal_flip=True,
+                                       rescale=1. / 255,
+                                       rotation_range=20,
+                                       shear_range=0.2,
+                                       width_shift_range=0.2)
+    validation_datagen = ImageDataGenerator(rescale=1. / 255)
 
-    validation_datagen = ImageDataGenerator(rescale=1./255)
-
-    train_generator = train_datagen.flow_from_directory(
-        work_dir / "train_images",
-        target_size=image_size.dimensions(),
-        batch_size=batch_size,
-        class_mode='categorical')
-
-    validation_generator = validation_datagen.flow_from_directory(
-        work_dir / "test_images",
-        target_size=image_size.dimensions(),
-        batch_size=batch_size,
-        class_mode='categorical',
-        shuffle=False)
+    train_generator = train_datagen.flow_from_directory(work_dir / "train_images",
+                                                        target_size=image_size.dimensions(),
+                                                        batch_size=batch_size,
+                                                        class_mode='categorical')
+    validation_generator = validation_datagen.flow_from_directory(work_dir / "test_images",
+                                                                  target_size=image_size.dimensions(),
+                                                                  batch_size=batch_size,
+                                                                  class_mode='categorical',
+                                                                  shuffle=False)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=optimizers.RMSprop(lr=1e-4),
@@ -80,15 +75,14 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, per
         callbacks_list = [history_checkpoint]
 
     # Train model
-    model.fit_generator(
-        train_generator,
-        callbacks=callbacks_list,
-        epochs=epochs,
-        initial_epoch=int(re.match(fr"{net}-(\d*)\.h5", model_name.name).group(1)),
-        steps_per_epoch=train_generator.samples/train_generator.batch_size,
-        validation_data=validation_generator,
-        validation_steps=validation_generator.samples/validation_generator.batch_size,
-        verbose=1)
+    model.fit_generator(train_generator,
+                        callbacks=callbacks_list,
+                        epochs=epochs,
+                        initial_epoch=int(re.match(fr"{net}-(\d*)\.h5", model_name.name).group(1)),
+                        steps_per_epoch=train_generator.samples / train_generator.batch_size,
+                        validation_data=validation_generator,
+                        validation_steps=validation_generator.samples / validation_generator.batch_size,
+                        verbose=1)
 
     if evaluate:
         from hw2.evaluation import plot_metrics
