@@ -1,15 +1,8 @@
-import argparse
-import re
-
-from hw2.image_size import ImageSize
-from hw2.learning import tune
-
-
 def initialize_dir(work_dir):
     import pandas as pd
-    import shutil
-
     from pathlib import Path
+    import re
+    import shutil
 
     Path(f"{work_dir}/keras").mkdir(exist_ok=True)
 
@@ -36,6 +29,11 @@ def initialize_dir(work_dir):
 
 
 if __name__ == "__main__":
+    import argparse
+
+    from hw2.image_size import ImageSize
+    from hw2.learning import tune
+
     parser = argparse.ArgumentParser()
 
     # Required arguments

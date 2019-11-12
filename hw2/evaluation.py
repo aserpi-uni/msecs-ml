@@ -1,9 +1,7 @@
-import matplotlib as mpl
-import pandas as pd
-import seaborn as sns
-
 from matplotlib import pyplot as plt
+import pandas as pd
 from pathlib import Path
+import seaborn as sns
 
 
 def plot_metrics(history, net):
@@ -30,4 +28,4 @@ def plot_metrics(history, net):
 
 
 sns.set()
-mpl.rcParams['font.family'] = 'cmr10'
+plt.rcParams['font.family'] = 'cmr10'

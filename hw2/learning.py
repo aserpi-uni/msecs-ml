@@ -1,13 +1,12 @@
-import csv
-import re
-
 from argparse import ArgumentError
+import csv
 from keras import optimizers
 from keras.callbacks import Callback, ModelCheckpoint
 from keras.engine.saving import load_model
 from keras.preprocessing.image import ImageDataGenerator
 from natsort import natsorted
 from pathlib import Path
+import re
 
 
 def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, persistence=None):
