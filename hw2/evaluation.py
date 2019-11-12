@@ -1,6 +1,5 @@
 from matplotlib import pyplot as plt
 import pandas as pd
-from pathlib import Path
 import seaborn as sns
 
 
@@ -17,13 +16,13 @@ def plot_metrics(history, net):
     plt.figure()
     ax = sns.lineplot(data=metrics[["Accuracy", "Validation accuracy"]], dashes=False, markers=True)
     ax.set(xlabel="Epoch", ylabel='Accuracy')
-    ax.get_figure().savefig(history.parent / Path(f"{net}_accuracy.pdf"), format="pdf")
+    ax.get_figure().savefig(history.parent / f"{net}_accuracy.pdf", format="pdf")
     plt.clf()
 
     plt.figure()
     ax = sns.lineplot(data=metrics[["Loss", "Validation loss"]], dashes=False, markers=True)
     ax.set(xlabel="Epoch", ylabel="Loss")
-    ax.get_figure().savefig(history.parent / Path(f"{net}_loss.pdf"), format="pdf")
+    ax.get_figure().savefig(history.parent / f"{net}_loss.pdf", format="pdf")
     plt.clf()
 
 

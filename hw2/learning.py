@@ -11,8 +11,8 @@ import re
 
 def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, persistence=None):
     try:
-        model_name = natsorted(list(Path(f"{work_dir}/keras").glob(f"{net}-*.h5")))[-1]
-        model = load_model(model_name.as_posix())  # Fixed in next Keras release
+        model_name = natsorted(list((work_dir / "keras").glob(f"{net}-*.h5")))[-1]
+        model = load_model(model_name)
         print(f"Loaded model {model_name}")
 
     except IndexError:
@@ -46,13 +46,13 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, per
     validation_datagen = ImageDataGenerator(rescale=1./255)
 
     train_generator = train_datagen.flow_from_directory(
-        f"{work_dir}/train_images",
+        work_dir / "train_images",
         target_size=image_size.dimensions(),
         batch_size=batch_size,
         class_mode='categorical')
 
     validation_generator = validation_datagen.flow_from_directory(
-        f"{work_dir}/test_images",
+        work_dir / "test_images",
         target_size=image_size.dimensions(),
         batch_size=batch_size,
         class_mode='categorical',
@@ -66,12 +66,13 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, per
     history_checkpoint = HistoryCheckPoint(net, work_dir)
     if persistence:
         if persistence == "all":
-            model_checkpoint = ModelCheckpoint(work_dir + "/keras/" + net + "-{epoch:02d}.h5", period=1, verbose=1)
-        elif persistence == "best":
-            model_checkpoint = ModelCheckpoint(f"{work_dir}/keras/{net}-best.h5", period=1, save_best_only=True,
+            model_checkpoint = ModelCheckpoint((work_dir / "keras" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
                                                verbose=1)
+        elif persistence == "best":
+            model_checkpoint = ModelCheckpoint((work_dir / "keras" / f"{net}-best.h5").as_posix(), period=1,
+                                               save_best_only=True, verbose=1)
         elif persistence == "last":
-            model_checkpoint = ModelCheckpoint(f"{work_dir}/keras/{net}.h5", period=1, verbose=1)
+            model_checkpoint = ModelCheckpoint((work_dir / "keras" / f"{net}.h5").as_posix(), period=1, verbose=1)
         else:
             raise ArgumentError(f"Unknown persistence option '{persistence}'")
         callbacks_list = [history_checkpoint, model_checkpoint]
@@ -99,7 +100,7 @@ class HistoryCheckPoint(Callback):
 
     def __init__(self, net, work_dir):
         super().__init__()
-        self.history = Path(f"{work_dir}/keras/{net}.history")
+        self.history = work_dir / "keras" / f"{net}.history"
 
         if not self.history.is_file():
             with open(self.history, "w", newline='') as fout:

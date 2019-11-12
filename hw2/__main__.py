@@ -1,6 +1,6 @@
+# TODO: rewrite
 def initialize_dir(work_dir):
     import pandas as pd
-    from pathlib import Path
     import re
     import shutil
 
@@ -30,6 +30,7 @@ def initialize_dir(work_dir):
 
 if __name__ == "__main__":
     import argparse
+    from pathlib import Path
 
     from hw2.image_size import ImageSize
     from hw2.learning import tune
@@ -39,7 +40,7 @@ if __name__ == "__main__":
     # Required arguments
     parser.add_argument("net", choices=["inception", "resnet50", "vgg16"], help="neural network")
     parser.add_argument("epochs", help="epochs", type=int)
-    parser.add_argument("working_directory", help="working directory")
+    parser.add_argument("working_directory", help="working directory", type=Path)
 
     # Optional arguments
 
@@ -51,7 +52,7 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     if args["initialise"]:
-        initialize_dir(args["working_directory"])
+        initialise_dir(args["working_directory"])
 
     tune(ImageSize(240, 800),
          args["working_directory"],
