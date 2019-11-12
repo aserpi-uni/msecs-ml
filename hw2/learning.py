@@ -1,11 +1,11 @@
 from argparse import ArgumentError
 import csv
-from keras import optimizers
-from keras.callbacks import Callback, ModelCheckpoint
-from keras.engine.saving import load_model
-from keras.preprocessing.image import ImageDataGenerator
 from natsort import natsorted
 import re
+from tensorflow.keras.optimizers import RMSprop
+from tensorflow.keras.callbacks import Callback, CSVLogger, ModelCheckpoint
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, persistence=None):
@@ -57,20 +57,21 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, per
                                                                   shuffle=False)
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer=optimizers.RMSprop(lr=1e-4),
+                  optimizer=RMSprop(lr=1e-4),
                   metrics=['acc'])
 
     # Define callbacks
     history_checkpoint = HistoryCheckPoint(net, work_dir)
     callbacks_list = [history_checkpoint]
     if "best" in persistence:
-        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / f"{net}-best.h5").as_posix(), period=1,
+        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / f"{net}-best.h5").as_posix(), save_freq="epoch",
                                               save_best_only=True, verbose=1))
     if "all" in persistence:
-        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
-                                              verbose=1))
+        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / (net + "-{epoch:02d}.h5")).as_posix(),
+                                              save_freq="epoch", verbose=1))
     elif "last" in persistence:
-        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / f"{net}.h5").as_posix(), period=1, verbose=1))
+        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / f"{net}.h5").as_posix(), save_freq="epoch",
+                                              verbose=1))
 
     # Train model
     model.fit_generator(train_generator,

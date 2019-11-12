@@ -1,8 +1,8 @@
-from keras import models, layers
+from tensorflow.keras import models, layers
 
 
 def inception(image_size):
-    from keras.applications import InceptionV3
+    from tensorflow.keras.applications import InceptionV3
     inception_conv = InceptionV3(weights="imagenet", include_top=False, input_shape=image_size.rgb_dimensions())
 
     # Freeze all layers
@@ -25,7 +25,7 @@ def inception(image_size):
 
 
 def resnet50(image_size):
-    from keras.applications import ResNet50V2
+    from tensorflow.keras.applications import ResNet50V2
     resnet_conv = ResNet50V2(weights="imagenet", include_top=False, input_shape=image_size.rgb_dimensions())
 
     # Freeze all layers
@@ -48,7 +48,7 @@ def resnet50(image_size):
 
 
 def vgg16(image_size):
-    from keras.applications import VGG16
+    from tensorflow.keras.applications import VGG16
     vgg_conv = VGG16(weights='imagenet', include_top=False, input_shape=image_size.rgb_dimensions())
 
     # Freeze all layers except last 4
