@@ -26,10 +26,13 @@ if __name__ == "__main__":
     if args["initialise"]:
         initialise_dir(args["working_directory"])
 
-    tune(ImageSize(240, 800),
-         args["working_directory"],
-         args["net"],
-         args["epochs"],
-         args["batch_size"],
-         args["stats"],
-         set(args["persistence"]))
+    history_file = tune(ImageSize(240, 800),
+                        args["working_directory"],
+                        args["net"],
+                        args["epochs"],
+                        args["batch_size"],
+                        set(args["persistence"]))
+
+    if args["stats"]:
+        from hw2.evaluation import plot_metrics
+        plot_metrics(history_file.history, args["net"])
