@@ -17,7 +17,8 @@ if __name__ == "__main__":
 
     parser.add_argument("-b", "--batch-size", help="batch size", type=int)
     parser.add_argument("-i", "--initialise", action="store_true", help="initialise working directory")
-    parser.add_argument("-p", "--persistence", choices=["all", "best", "last"], help="save models", nargs="?")
+    parser.add_argument("-p", "--persistence",
+                        choices=["all", "best", "last"], default=[], help="save models", nargs="*")
     parser.add_argument("-s", "--stats", action="store_true", help="display statistics")
 
     args = vars(parser.parse_args())
@@ -31,4 +32,4 @@ if __name__ == "__main__":
          args["epochs"],
          args["batch_size"],
          args["stats"],
-         args["persistence"])
+         set(args["persistence"]))

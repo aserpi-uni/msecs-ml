@@ -5,17 +5,22 @@ from keras.callbacks import Callback, ModelCheckpoint
 from keras.engine.saving import load_model
 from keras.preprocessing.image import ImageDataGenerator
 from natsort import natsorted
-from pathlib import Path
 import re
 
 
 def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, persistence=None):
+    if persistence is None:
+        persistence = []
+
     try:
-        model_name = natsorted(list((work_dir / "keras").glob(f"{net}-*.h5")))[-1]
-        model = load_model(model_name)
-        print(f"Loaded model {model_name}")
+        model_file = natsorted([f for f in (work_dir / "keras").glob(f"{net}-*.h5")
+                                if re.match(fr"{net}-\d+\.h5", f.name)])[-1]
+        initial_epoch = int(re.match(fr"{net}-(\d+)\.h5", model_file.name).group(1))
+        model = load_model(model_file)
+        print(f"Loaded model {model_file.name}")
 
     except IndexError:
+        initial_epoch = 0
         if net == "inception":
             from hw2.models import inception
             model = inception(image_size)
@@ -27,8 +32,6 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, per
             model = vgg16(image_size)
         else:
             raise ArgumentError(f"Unknown network '{net}'")
-
-        model_name = Path(f"{net}-0.h5")
 
     # Show model summary
     model.summary()
@@ -59,26 +62,21 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, per
 
     # Define callbacks
     history_checkpoint = HistoryCheckPoint(net, work_dir)
-    if persistence:
-        if persistence == "all":
-            model_checkpoint = ModelCheckpoint((work_dir / "keras" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
-                                               verbose=1)
-        elif persistence == "best":
-            model_checkpoint = ModelCheckpoint((work_dir / "keras" / f"{net}-best.h5").as_posix(), period=1,
-                                               save_best_only=True, verbose=1)
-        elif persistence == "last":
-            model_checkpoint = ModelCheckpoint((work_dir / "keras" / f"{net}.h5").as_posix(), period=1, verbose=1)
-        else:
-            raise ArgumentError(f"Unknown persistence option '{persistence}'")
-        callbacks_list = [history_checkpoint, model_checkpoint]
-    else:
-        callbacks_list = [history_checkpoint]
+    callbacks_list = [history_checkpoint]
+    if "best" in persistence:
+        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / f"{net}-best.h5").as_posix(), period=1,
+                                              save_best_only=True, verbose=1))
+    if "all" in persistence:
+        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
+                                              verbose=1))
+    elif "last" in persistence:
+        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / f"{net}.h5").as_posix(), period=1, verbose=1))
 
     # Train model
     model.fit_generator(train_generator,
                         callbacks=callbacks_list,
                         epochs=epochs,
-                        initial_epoch=int(re.match(fr"{net}-(\d*)\.h5", model_name.name).group(1)),
+                        initial_epoch=initial_epoch,
                         steps_per_epoch=train_generator.samples / train_generator.batch_size,
                         validation_data=validation_generator,
                         validation_steps=validation_generator.samples / validation_generator.batch_size,
