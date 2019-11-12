@@ -1,31 +1,37 @@
-# TODO: rewrite
-def initialize_dir(work_dir):
+def initialise_dir(work_dir):
     import pandas as pd
     import re
     import shutil
 
-    Path(f"{work_dir}/keras").mkdir(exist_ok=True)
+    test_dir = work_dir / "test_images"
+    test_groud_truths = test_dir / "ground_truth.txt"
+    train_dir = work_dir / "train_images"
 
-    images = pd.read_csv(f"{work_dir}/test_images/ground_truth.txt", sep=";", header=None, names=["image", "class"])
+    test_images = pd.read_csv(test_groud_truths, sep=";", header=None, names=["image", "class"])
+    test_images["class"] = test_images["class"].apply(lambda c: re.sub(r'[^\w]', '', c))
 
-    images["class"] = images["class"].apply(lambda cls: re.sub(r'[^\w]', '', cls))
+    # Not all classes in the train dataset are also in the test dataset and vice versa
+    test_classes = set(test_images["class"].unique())
+    train_classes = set([p.name for p in train_dir.iterdir() if p.is_dir()])
+    common_classes = test_classes.intersection(train_classes)
 
-    for boat_type in images["class"].unique():
-        Path(f"{work_dir}/test_images/{boat_type}").mkdir()
+    for boat_type in common_classes:
+        (test_dir / boat_type).mkdir()
 
-    for idx, row in images.iterrows():
-        Path(f"{work_dir}/test_images/{row['image']}").rename(f"{work_dir}/test_images/{row['class']}/{row['image']}")
-
-    test_classes = [p.name for p in Path(f"{work_dir}/test_images").glob("*") if p.is_dir()]
-    train_classes = [p.name for p in Path(f"{work_dir}/train_images").glob("*") if p.is_dir()]
-
-    for c in test_classes:
-        if c not in train_classes:
-            shutil.rmtree(f"{work_dir}/test_images/{c}")
+    def __move_or_delete_image(row):
+        image = test_dir / row["image"]
+        if row["class"] in common_classes:
+            image.rename(test_dir / row["class"] / row["image"])
+        else:
+            image.unlink()
+    test_images.apply(lambda r: __move_or_delete_image(r), axis=1)
 
     for c in train_classes:
-        if c not in test_classes:
-            shutil.rmtree(f"{work_dir}/train_images/{c}")
+        if c not in common_classes:
+            shutil.rmtree(train_dir / c)
+
+    test_groud_truths.unlink()
+    (work_dir / "keras").mkdir(exist_ok=True)
 
 
 if __name__ == "__main__":
