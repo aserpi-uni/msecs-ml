@@ -26,5 +26,7 @@ def plot_metrics(history, net):
     plt.clf()
 
 
-sns.set()
-plt.rcParams['font.family'] = 'cmr10'
+plt.rcParams["font.family"] = "serif"
+plt.rcParams["font.serif"] = []
+plt.rcParams["text.usetex"] = True
+plt.rcParams["text.latex.preamble"] = [r"\usepackage{lmodern}"]
