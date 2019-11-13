@@ -1,9 +1,10 @@
 from argparse import ArgumentError
 import csv
+from datetime import datetime
 from natsort import natsorted
 import re
 from tensorflow.keras.optimizers import RMSprop
-from tensorflow.keras.callbacks import Callback, CSVLogger, ModelCheckpoint
+from tensorflow.keras.callbacks import Callback, CSVLogger, ModelCheckpoint, TensorBoard
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -61,8 +62,11 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, persistence=None):
                   metrics=['acc'])
 
     # Define callbacks
+    csv_logger = CSVLogger(filename=(work_dir / "keras" / f"{net}.csv").as_posix(), append=True)
     history_checkpoint = HistoryCheckPoint(net, work_dir)
-    callbacks_list = [history_checkpoint]
+    tensorboard_callback = TensorBoard(log_dir=f"tensorboard/{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                                       histogram_freq=1)
+    callbacks_list = [csv_logger, tensorboard_callback, history_checkpoint]
     if "best" in persistence:
         callbacks_list.append(ModelCheckpoint((work_dir / "keras" / f"{net}-best.h5").as_posix(), save_freq="epoch",
                                               save_best_only=True, verbose=1))
@@ -86,6 +90,7 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, persistence=None):
     return history_checkpoint.history
 
 
+# TODO
 class HistoryCheckPoint(Callback):
     metrics = ["acc", "val_acc", "loss", "val_loss"]
 
