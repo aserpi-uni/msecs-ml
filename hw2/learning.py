@@ -1,6 +1,6 @@
 from argparse import ArgumentError
 import csv
-from keras import optimizers
+from keras.optimizers import Adam
 from keras.callbacks import Callback, ModelCheckpoint
 from keras.engine.saving import load_model
 from keras.preprocessing.image import ImageDataGenerator
@@ -21,15 +21,16 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, persistence=None):
 
     except IndexError:
         initial_epoch = 0
+        num_classes = len([c for c in train_dir.iterdir() if c.is_dir()])
         if net == "inception":
             from hw2.models import inception
-            model = inception(image_size)
+            model = inception(image_size, num_classes)
         elif net == "resnet50":
             from hw2.models import resnet50
-            model = resnet50(image_size)
+            model = resnet50(image_size, num_classes)
         elif net == "vgg16":
             from hw2.models import vgg16
-            model = vgg16(image_size)
+            model = vgg16(image_size, num_classes)
         else:
             raise ArgumentError(f"Unknown network '{net}'")
 
@@ -57,7 +58,7 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, persistence=None):
                                                                   shuffle=False)
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer=optimizers.RMSprop(lr=1e-4),
+                  optimizer=Adam(),
                   metrics=['acc'])
 
     # Define callbacks
