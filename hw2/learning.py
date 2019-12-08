@@ -64,7 +64,7 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
                                                                      if v})
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer=Adam(),
+                  optimizer=Adam(learning_rate=1e-4),
                   metrics=['acc'])
 
     # Define callbacks
