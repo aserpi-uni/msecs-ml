@@ -1,5 +1,5 @@
 from keras.models import Sequential
-from keras.layers import Dense, Flatten, Dropout
+from keras.layers import BatchNormalization, Dense, Flatten, Dropout
 
 
 def inception(image_size, num_classes):
@@ -36,7 +36,8 @@ def __fine_tuning_model(original_model, num_classes):
     # Add new layers
     model.add(Flatten())
     model.add(Dense(1024, activation='relu'))
-    model.add(Dropout(0.5))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.2))
     model.add(Dense(num_classes, activation='softmax'))
 
     return model
