@@ -8,12 +8,12 @@ from natsort import natsorted
 import re
 
 
-def tune(image_size, work_dir, net, epochs, batch_size=None, persistence=None):
+def tune(image_size, net, epochs, train_dir, test_dir, out_dir, batch_size=None, persistence=None):
     if persistence is None:
         persistence = []
 
     try:
-        model_file = natsorted([f for f in (work_dir / "keras").glob(f"{net}-*.h5")
+        model_file = natsorted([f for f in (out_dir / "models").glob(f"{net}-*.h5")
                                 if re.match(fr"{net}-\d+\.h5", f.name)])[-1]
         initial_epoch = int(re.match(fr"{net}-(\d+)\.h5", model_file.name).group(1))
         model = load_model(model_file)
@@ -47,11 +47,11 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, persistence=None):
                                        width_shift_range=0.2)
     validation_datagen = ImageDataGenerator(rescale=1. / 255)
 
-    train_generator = train_datagen.flow_from_directory(work_dir / "train_images",
+    train_generator = train_datagen.flow_from_directory(train_dir,
                                                         target_size=image_size.dimensions(),
                                                         batch_size=batch_size,
                                                         class_mode='categorical')
-    validation_generator = validation_datagen.flow_from_directory(work_dir / "test_images",
+    validation_generator = validation_datagen.flow_from_directory(test_dir,
                                                                   target_size=image_size.dimensions(),
                                                                   batch_size=batch_size,
                                                                   class_mode='categorical',
@@ -62,16 +62,16 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, persistence=None):
                   metrics=['acc'])
 
     # Define callbacks
-    history_checkpoint = HistoryCheckPoint(net, work_dir)
+    history_checkpoint = HistoryCheckPoint(net, out_dir)
     callbacks_list = [history_checkpoint]
     if "best" in persistence:
-        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / f"{net}-best.h5").as_posix(), period=1,
+        callbacks_list.append(ModelCheckpoint((out_dir / "models" / f"{net}-best.h5").as_posix(), period=1,
                                               save_best_only=True, verbose=1))
     if "all" in persistence:
-        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
+        callbacks_list.append(ModelCheckpoint((out_dir / "models" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
                                               verbose=1))
     elif "last" in persistence:
-        callbacks_list.append(ModelCheckpoint((work_dir / "keras" / f"{net}.h5").as_posix(), period=1, verbose=1))
+        callbacks_list.append(ModelCheckpoint((out_dir / "models" / f"{net}.h5").as_posix(), period=1, verbose=1))
 
     # Train model
     model.fit_generator(train_generator,
@@ -89,9 +89,9 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, persistence=None):
 class HistoryCheckPoint(Callback):
     metrics = ["acc", "val_acc", "loss", "val_loss"]
 
-    def __init__(self, net, work_dir):
+    def __init__(self, net, out_dir):
         super().__init__()
-        self.history = work_dir / "keras" / f"{net}.history"
+        self.history = out_dir / f"{net}.history"
 
         if not self.history.is_file():
             with open(self.history, "w", newline='') as fout:
