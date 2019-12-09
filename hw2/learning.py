@@ -100,7 +100,7 @@ class HistoryCheckPoint(Callback):
 
     def __init__(self, net, out_dir):
         super().__init__()
-        self.history = out_dir / f"{net}.history"
+        self.history = out_dir / f"{net}.csv"
 
         if not self.history.is_file():
             with open(self.history, "w", newline='') as fout:
