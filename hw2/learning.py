@@ -44,7 +44,7 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
     model.summary()
 
     # Read images and augment data
-    train_datagen = ImageDataGenerator(fill_mode="nearest",
+    train_datagen = ImageDataGenerator(fill_mode="reflect",
                                        height_shift_range=0.2,
                                        horizontal_flip=True,
                                        rescale=1. / 255,
