@@ -8,7 +8,10 @@ from natsort import natsorted
 import re
 
 
-def tune(image_size, net, epochs, train_dir, test_dir, out_dir, batch_size=None, persistence=None):
+def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=None, persistence=None):
+    if not image_size:
+        from hw2.data import ImageSize
+        image_size = ImageSize(244, 244)
     if persistence is None:
         persistence = []
 
@@ -47,15 +50,17 @@ def tune(image_size, net, epochs, train_dir, test_dir, out_dir, batch_size=None,
                                        width_shift_range=0.2)
     validation_datagen = ImageDataGenerator(rescale=1. / 255)
 
+    # Use batch_size only if it is a meaningful value
     train_generator = train_datagen.flow_from_directory(train_dir,
                                                         target_size=image_size.dimensions(),
-                                                        batch_size=batch_size,
-                                                        class_mode='categorical')
+                                                        class_mode='categorical',
+                                                        **{k: v for k, v in {"batch_size": batch_size}.items() if v})
     validation_generator = validation_datagen.flow_from_directory(test_dir,
                                                                   target_size=image_size.dimensions(),
-                                                                  batch_size=batch_size,
                                                                   class_mode='categorical',
-                                                                  shuffle=False)
+                                                                  shuffle=False,
+                                                                  **{k: v for k, v in {"batch_size": batch_size}.items()
+                                                                     if v})
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=Adam(),
