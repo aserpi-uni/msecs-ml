@@ -13,7 +13,7 @@ import re
 def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=None, persistence=None):
     if not image_size:
         from hw2.data import ImageSize
-        if net == "inception":
+        if net == "earenet" or net == "inception":
             image_size = ImageSize(299, 299)
         elif net == "resnet50" or net == "vgg16":
             image_size = ImageSize(224, 224)
@@ -31,7 +31,10 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
         initial_epoch = 0
         num_classes = len([c for c in train_dir.iterdir() if c.is_dir()])
         (out_dir / "models").mkdir(exist_ok=True, parents=True)
-        if net == "inception":
+        if net == "earenet":
+            from hw2.models import earenet
+            model = earenet(image_size, num_classes)
+        elif net == "inception":
             from hw2.models import inception
             model = inception(image_size, num_classes)
         elif net == "resnet50":
@@ -69,7 +72,7 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
                                                                      if v})
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer=Adam(learning_rate=1e-4),
+                  optimizer=Adam(learning_rate=(1e-3 if net == "earenet" else 1e-4)),
                   metrics=['acc'])
 
     # Define callbacks

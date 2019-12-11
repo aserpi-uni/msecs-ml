@@ -8,7 +8,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Required arguments
-    parser.add_argument("net", choices=["inception", "resnet50", "vgg16"], help="neural network")
+    parser.add_argument("net", choices=["earenet", "inception", "resnet50", "vgg16"], help="neural network")
     parser.add_argument("epochs", help="epochs", type=int)
     parser.add_argument("train_directory", help="train dataset directory", type=Path)
     parser.add_argument("test_directory", help="test dataset directory", type=Path)
