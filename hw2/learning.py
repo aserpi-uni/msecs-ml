@@ -8,7 +8,7 @@ from natsort import natsorted
 import re
 
 
-def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, persistence=None):
+def tune(image_size, work_dir, net, epochs, batch_size=None, persistence=None):
     if persistence is None:
         persistence = []
 
@@ -82,9 +82,7 @@ def tune(image_size, work_dir, net, epochs, batch_size=None, evaluate=False, per
                         validation_steps=validation_generator.samples / validation_generator.batch_size,
                         verbose=1)
 
-    if evaluate:
-        from hw2.evaluation import plot_metrics
-        plot_metrics(history_checkpoint.history, net)
+    return history_checkpoint.history
 
 
 class HistoryCheckPoint(Callback):

@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 
 
-def plot_metrics(history, net):
+def plot_metrics(net, history):
     metrics = pd.read_csv(history)
     metrics.index += 1
 
