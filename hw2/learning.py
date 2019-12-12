@@ -25,6 +25,7 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
     except IndexError:
         initial_epoch = 0
         num_classes = len([c for c in train_dir.iterdir() if c.is_dir()])
+        (out_dir / "models").mkdir(exist_ok=True, parents=True)
         if net == "inception":
             from hw2.models import inception
             model = inception(image_size, num_classes)
