@@ -1,10 +1,12 @@
 from argparse import ArgumentError
 import csv
+from contextlib import suppress
 from keras.optimizers import Adam
 from keras.callbacks import Callback, ModelCheckpoint
 from keras.engine.saving import load_model
 from keras.preprocessing.image import ImageDataGenerator
 from natsort import natsorted
+from pathlib import Path
 import re
 
 
@@ -77,7 +79,8 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
         callbacks_list.append(ModelCheckpoint((out_dir / "models" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
                                               verbose=1))
     elif "last" in persistence:
-        callbacks_list.append(ModelCheckpoint((out_dir / "models" / f"{net}.h5").as_posix(), period=1, verbose=1))
+        callbacks_list.append(LastModelCheckpoint((out_dir / "models" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
+                                                  verbose=1))
 
     # Train model
     model.fit_generator(train_generator,
@@ -108,3 +111,12 @@ class HistoryCheckPoint(Callback):
         with open(self.history, "a", newline='') as fout:
             csv.DictWriter(fout, extrasaction="ignore", fieldnames=HistoryCheckPoint.metrics, restval=0) \
                 .writerow(logs)
+
+
+class LastModelCheckpoint(ModelCheckpoint):
+    def on_epoch_end(self, epoch, logs=None):
+        if self.epochs_since_last_save + 1 >= self.period:
+            with suppress(FileNotFoundError):  # New in Python 3.8: Path.unlink(missing_ok=True)
+                Path(self.filepath.format(epoch=epoch-self.epochs_since_last_save)).unlink()
+
+        super().on_epoch_end(epoch, logs=logs)
