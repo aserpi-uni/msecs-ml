@@ -1,11 +1,13 @@
-from math import ceil
+import math
+from pathlib import Path
+
 from matplotlib import pyplot as plt
-from matplotlib.ticker import MultipleLocator
+from matplotlib import ticker
 import pandas as pd
 import seaborn as sns
 
 
-def plot_metrics(net, history, loss_ylim=None):
+def plot_metrics(net: str, history: Path, loss_ylim: float = None) -> None:
     metrics = pd.read_csv(history)
     metrics.index += 1
 

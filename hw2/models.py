@@ -1,8 +1,10 @@
-from keras.models import Sequential
 from keras.layers import BatchNormalization, Dense, Flatten, Dropout
+from keras.models import Sequential
+
+from hw2.data import ImageSize
 
 
-def earenet(image_size, num_classes):
+def earenet(image_size: ImageSize, num_classes: int) -> Sequential:
     from keras.layers import Conv2D, MaxPooling2D
 
     model = Sequential(name="EareNet")
@@ -29,28 +31,28 @@ def earenet(image_size, num_classes):
     return model
 
 
-def inception(image_size, num_classes):
+def inception(image_size: ImageSize, num_classes: int) -> Sequential:
     from keras.applications import InceptionV3
     inception_conv = InceptionV3(weights="imagenet", include_top=False, input_shape=image_size.rgb_dimensions())
 
-    return __fine_tuning_model(inception_conv, num_classes)
+    return _fine_tuning_model(inception_conv, num_classes)
 
 
-def resnet50(image_size, num_classes):
+def resnet50(image_size: ImageSize, num_classes: int) -> Sequential:
     from keras.applications import ResNet50V2
     resnet_conv = ResNet50V2(weights="imagenet", include_top=False, input_shape=image_size.rgb_dimensions())
 
-    return __fine_tuning_model(resnet_conv, num_classes)
+    return _fine_tuning_model(resnet_conv, num_classes)
 
 
-def vgg16(image_size, num_classes):
+def vgg16(image_size: ImageSize, num_classes: int) -> Sequential:
     from keras.applications import VGG16
     vgg_conv = VGG16(weights='imagenet', include_top=False, input_shape=image_size.rgb_dimensions())
 
-    return __fine_tuning_model(vgg_conv, num_classes)
+    return _fine_tuning_model(vgg_conv, num_classes)
 
 
-def __fine_tuning_model(original_model, num_classes):
+def _fine_tuning_model(original_model, num_classes):
     model = Sequential(name=f"fine_tuning_{original_model.name}")
 
     # Freeze all layers except last 4

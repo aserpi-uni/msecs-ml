@@ -1,16 +1,22 @@
-from argparse import ArgumentError
+import argparse
 import csv
 from contextlib import suppress
-from keras.optimizers import Adam
-from keras.callbacks import Callback, ModelCheckpoint
-from keras.engine.saving import load_model
-from keras.preprocessing.image import ImageDataGenerator
-from natsort import natsorted
 from pathlib import Path
 import re
+from typing import Set
+
+from keras.callbacks import Callback, ModelCheckpoint
+from keras.engine.saving import load_model
+from keras.optimizers import Adam
+from keras.preprocessing.image import ImageDataGenerator
+import natsort
+
+from hw2.data import ImageSize
 
 
-def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=None, save_models=None):
+def tune(net: str, epochs: int,
+         train_dir: Path, test_dir: Path, out_dir: Path,
+         batch_size: int = None, image_size: ImageSize = None, save_models: Set[str] = None) -> Path:
     if not image_size:
         from hw2.data import ImageSize
         if net == "earenet" or net == "inception":
@@ -21,8 +27,8 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
         save_models = []
 
     try:
-        model_file = natsorted([f for f in (out_dir / "models").glob(f"{net}-*.h5")
-                                if re.match(fr"{net}-\d+\.h5", f.name)])[-1]
+        model_file = natsort.natsorted([f for f in (out_dir / "models").glob(f"{net}-*.h5")
+                                        if re.match(fr"{net}-\d+\.h5", f.name)])[-1]
         initial_epoch = int(re.match(fr"{net}-(\d+)\.h5", model_file.name).group(1))
         model = load_model(model_file)
         print(f"Loaded model {model_file.name}")
@@ -44,7 +50,7 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
             from hw2.models import vgg16
             model = vgg16(image_size, num_classes)
         else:
-            raise ArgumentError(f"Unknown network '{net}'")
+            raise argparse.ArgumentError(f"Unknown network '{net}'")
 
     # Show model summary
     model.summary()
@@ -64,12 +70,12 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
                                                         target_size=image_size.dimensions(),
                                                         class_mode='categorical',
                                                         **{k: v for k, v in {"batch_size": batch_size}.items() if v})
-    validation_generator = validation_datagen.flow_from_directory(test_dir,
-                                                                  target_size=image_size.dimensions(),
-                                                                  class_mode='categorical',
-                                                                  shuffle=False,
-                                                                  **{k: v for k, v in {"batch_size": batch_size}.items()
-                                                                     if v})
+    validation_generator = validation_datagen.flow_from_directory(
+        test_dir,
+        target_size=image_size.dimensions(),
+        class_mode='categorical',
+        shuffle=False,
+        **{k: v for k, v in {"batch_size": batch_size}.items() if v})
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=Adam(learning_rate=(1e-3 if net == "earenet" else 1e-4)),
@@ -93,9 +99,9 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
                         callbacks=callbacks_list,
                         epochs=epochs,
                         initial_epoch=initial_epoch,
-                        steps_per_epoch=train_generator.samples / train_generator.batch_size,
+                        steps_per_epoch=(train_generator.samples / train_generator.batch_size),
                         validation_data=validation_generator,
-                        validation_steps=validation_generator.samples / validation_generator.batch_size,
+                        validation_steps=(validation_generator.samples / validation_generator.batch_size),
                         verbose=1)
 
     return history_checkpoint.history
