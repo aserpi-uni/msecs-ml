@@ -4,6 +4,16 @@ from keras.layers import BatchNormalization, Dense, Flatten, Dropout
 from keras.models import Sequential
 
 
+def default_image_size(net: str) -> Tuple[int, int]:
+    if net in ("earenet", "inception"):
+        image_size = (299, 299)
+    elif net in ("resnet50", "vgg16"):
+        image_size = (224, 224)
+    else:
+        raise ValueError(f"No default image size for network '{net}'")
+    return image_size
+
+
 def earenet(image_size: Tuple[int, int], num_classes: int) -> Sequential:
     from keras.layers import Conv2D, MaxPooling2D
 

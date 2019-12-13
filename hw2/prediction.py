@@ -6,6 +6,8 @@ from keras.engine.saving import load_model
 from keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 
+from hw2.models import default_image_size
+
 
 def predict(net: str, epoch: int,
             working_dir: pathlib.Path, test_dir: pathlib.Path,
@@ -14,10 +16,7 @@ def predict(net: str, epoch: int,
     out_dir = working_dir / "predictions"
 
     if not image_size:
-        if net in ("earenet", "inception"):
-            image_size = (299, 299)
-        elif net in ("resnet50", "vgg16"):
-            image_size = (224, 224)
+        image_size = default_image_size(net)
 
     test_generator = ImageDataGenerator(rescale=1. / 255).flow_from_directory(
         test_dir,

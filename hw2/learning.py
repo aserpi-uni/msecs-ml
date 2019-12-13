@@ -11,15 +11,14 @@ from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator
 import natsort
 
+from hw2.models import default_image_size
+
 
 def train(net: str, epochs: int,
           train_dir: Path, test_dir: Path, out_dir: Path,
           batch_size: int = None, image_size: Tuple[int, int] = None, save_models: Set[str] = None) -> Path:
     if not image_size:
-        if net == "earenet" or net == "inception":
-            image_size = (299, 299)
-        elif net == "resnet50" or net == "vgg16":
-            image_size = (224, 224)
+        default_image_size(net)
     if save_models is None:
         save_models = []
 
