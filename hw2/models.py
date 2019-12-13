@@ -1,16 +1,16 @@
+from typing import Tuple
+
 from keras.layers import BatchNormalization, Dense, Flatten, Dropout
 from keras.models import Sequential
 
-from hw2.data import ImageSize
 
-
-def earenet(image_size: ImageSize, num_classes: int) -> Sequential:
+def earenet(image_size: Tuple[int, int], num_classes: int) -> Sequential:
     from keras.layers import Conv2D, MaxPooling2D
 
     model = Sequential(name="EareNet")
 
     model.add(Conv2D(64, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding="same", name="bolck1_conv",
-                     input_shape=image_size.rgb_dimensions()))
+                     input_shape=(*image_size, 3)))
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='same', name='block1_pool'))
     model.add(BatchNormalization(name='block1_norm'))
 
@@ -31,23 +31,23 @@ def earenet(image_size: ImageSize, num_classes: int) -> Sequential:
     return model
 
 
-def inception(image_size: ImageSize, num_classes: int) -> Sequential:
+def inception(image_size: Tuple[int, int], num_classes: int) -> Sequential:
     from keras.applications import InceptionV3
-    inception_conv = InceptionV3(weights="imagenet", include_top=False, input_shape=image_size.rgb_dimensions())
+    inception_conv = InceptionV3(weights="imagenet", include_top=False, input_shape=(*image_size, 3))
 
     return _fine_tuning_model(inception_conv, num_classes)
 
 
-def resnet50(image_size: ImageSize, num_classes: int) -> Sequential:
+def resnet50(image_size: Tuple[int, int], num_classes: int) -> Sequential:
     from keras.applications import ResNet50V2
-    resnet_conv = ResNet50V2(weights="imagenet", include_top=False, input_shape=image_size.rgb_dimensions())
+    resnet_conv = ResNet50V2(weights="imagenet", include_top=False, input_shape=(*image_size, 3))
 
     return _fine_tuning_model(resnet_conv, num_classes)
 
 
-def vgg16(image_size: ImageSize, num_classes: int) -> Sequential:
+def vgg16(image_size: Tuple[int, int], num_classes: int) -> Sequential:
     from keras.applications import VGG16
-    vgg_conv = VGG16(weights='imagenet', include_top=False, input_shape=image_size.rgb_dimensions())
+    vgg_conv = VGG16(weights='imagenet', include_top=False, input_shape=(*image_size, 3))
 
     return _fine_tuning_model(vgg_conv, num_classes)
 

@@ -3,7 +3,7 @@ import csv
 from contextlib import suppress
 from pathlib import Path
 import re
-from typing import Set
+from typing import Set, Tuple
 
 from keras.callbacks import Callback, ModelCheckpoint
 from keras.engine.saving import load_model
@@ -11,18 +11,15 @@ from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator
 import natsort
 
-from hw2.data import ImageSize
-
 
 def train(net: str, epochs: int,
           train_dir: Path, test_dir: Path, out_dir: Path,
-          batch_size: int = None, image_size: ImageSize = None, save_models: Set[str] = None) -> Path:
+          batch_size: int = None, image_size: Tuple[int, int] = None, save_models: Set[str] = None) -> Path:
     if not image_size:
-        from hw2.data import ImageSize
         if net == "earenet" or net == "inception":
-            image_size = ImageSize(299, 299)
+            image_size = (299, 299)
         elif net == "resnet50" or net == "vgg16":
-            image_size = ImageSize(224, 224)
+            image_size = (224, 224)
     if save_models is None:
         save_models = []
 
@@ -67,12 +64,12 @@ def train(net: str, epochs: int,
 
     # Use batch_size only if it is a meaningful value
     train_generator = train_datagen.flow_from_directory(train_dir,
-                                                        target_size=image_size.dimensions(),
+                                                        target_size=image_size,
                                                         class_mode='categorical',
                                                         **{k: v for k, v in {"batch_size": batch_size}.items() if v})
     validation_generator = validation_datagen.flow_from_directory(
         test_dir,
-        target_size=image_size.dimensions(),
+        target_size=image_size,
         class_mode='categorical',
         shuffle=False,
         **{k: v for k, v in {"batch_size": batch_size}.items() if v})

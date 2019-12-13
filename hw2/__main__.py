@@ -25,8 +25,7 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     if args["image_size"]:
-        from hw2.data import ImageSize
-        args["image_size"] = ImageSize(*args["image_size"].split(",", 1))
+        args["image_size"] = tuple(args["image_size"].split(",", 1))
 
     history_file = train(args["net"],
                          args["epochs"],
