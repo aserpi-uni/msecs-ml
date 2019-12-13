@@ -9,6 +9,7 @@ from keras.engine.saving import load_model
 from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator
 import natsort
+import pandas as pd
 
 from hw2.models import create_model, default_image_size
 
@@ -85,6 +86,10 @@ def train(net: str, epochs: int,
                         validation_data=validation_generator,
                         validation_steps=(validation_generator.samples / validation_generator.batch_size),
                         verbose=1)
+
+    class_names = pd.Series(sorted([d.name for d in train_dir.iterdir() if d.is_dir()]), name="class")
+    class_names.index.name = "id"
+    class_names.to_csv(out_dir / "classes.csv", header=True, index=True)
 
     return history_checkpoint.history
 
