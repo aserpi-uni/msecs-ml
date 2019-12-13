@@ -14,9 +14,9 @@ import natsort
 from hw2.data import ImageSize
 
 
-def tune(net: str, epochs: int,
-         train_dir: Path, test_dir: Path, out_dir: Path,
-         batch_size: int = None, image_size: ImageSize = None, save_models: Set[str] = None) -> Path:
+def train(net: str, epochs: int,
+          train_dir: Path, test_dir: Path, out_dir: Path,
+          batch_size: int = None, image_size: ImageSize = None, save_models: Set[str] = None) -> Path:
     if not image_size:
         from hw2.data import ImageSize
         if net == "earenet" or net == "inception":

@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from hw2.learning import tune
+from hw2.learning import train
 
 
 if __name__ == "__main__":
@@ -28,14 +28,14 @@ if __name__ == "__main__":
         from hw2.data import ImageSize
         args["image_size"] = ImageSize(*args["image_size"].split(",", 1))
 
-    history_file = tune(args["net"],
-                        args["epochs"],
-                        args["train_directory"],
-                        args["test_directory"],
-                        args["out_directory"],
-                        args["batch_size"],
-                        args["image_size"],
-                        set(args["save_models"]))
+    history_file = train(args["net"],
+                         args["epochs"],
+                         args["train_directory"],
+                         args["test_directory"],
+                         args["out_directory"],
+                         args["batch_size"],
+                         args["image_size"],
+                         set(args["save_models"]))
 
     if args["stats"]:
         from hw2.evaluation import plot_metrics
