@@ -1,10 +1,31 @@
-import argparse
 from pathlib import Path
+from typing import Optional, Sequence, Tuple
 
 from hw2.learning import train
 
 
+def main(net: str, epochs: int, train_directory: Path, test_directory: Path, out_directory: Path,
+         batch_size: Optional[int] = None, image_size: Optional[Tuple[int, int]] = None,
+         save_models: Optional[Sequence[str]] = None, stats: Optional[bool] = None,
+         predict_directory: Optional[Path] = None):
+
+    if save_models is None:
+        save_models = []
+
+    history_file = train(net, epochs, train_directory, test_directory, out_directory, batch_size, image_size,
+                         set(save_models))
+
+    if stats:
+        from hw2.evaluation import plot_metrics
+        plot_metrics(net, history_file)
+
+    if predict_directory:
+        from hw2.prediction import predict
+        predict(net, epochs, out_directory, predict_directory, batch_size, image_size)
+
+
 if __name__ == "__main__":
+    import argparse
     parser = argparse.ArgumentParser()
 
     # Required arguments
@@ -25,26 +46,22 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     if args["image_size"]:
-        args["image_size"] = tuple(args["image_size"].split(",", 1))
+        def invalid_image_size():
+            parser.error("--image-size must be in the form '<int>,<int>'")
+        try:
+            args["image_size"] = tuple(map(int, args["image_size"].split(",", 1)))
+        except ValueError:
+            invalid_image_size()
+        if len(args["image_size"]) != 2:
+            invalid_image_size()
 
-    history_file = train(args["net"],
-                         args["epochs"],
-                         args["train_directory"],
-                         args["test_directory"],
-                         args["out_directory"],
-                         args["batch_size"],
-                         args["image_size"],
-                         set(args["save_models"]))
-
-    if args["stats"]:
-        from hw2.evaluation import plot_metrics
-        plot_metrics(args["net"], history_file)
-
-    if args["predict_directory"]:
-        from hw2.prediction import predict
-        predict(args["net"],
-                args["epochs"],
-                args["out_directory"],
-                args["predict_directory"],
-                args["batch_size"],
-                args["image_size"])
+    main(args["net"],
+         args["epochs"],
+         args["train_directory"],
+         args["test_directory"],
+         args["out_directory"],
+         args["batch_size"],
+         args["image_size"],
+         args["save_models"],
+         args["stats"],
+         args["predict_directory"])
