@@ -13,7 +13,10 @@ import re
 def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=None, persistence=None):
     if not image_size:
         from hw2.data import ImageSize
-        image_size = ImageSize(244, 244)
+        if net == "inception":
+            image_size = ImageSize(299, 299)
+        elif net == "resnet50" or net == "vgg16":
+            image_size = ImageSize(224, 224)
     if persistence is None:
         persistence = []
 

@@ -15,8 +15,8 @@ if __name__ == "__main__":
     parser.add_argument("out_directory", help="output directory", type=Path)
 
     # Optional arguments
-    parser.add_argument("-i", "--image-size", help="image size", type=int)
     parser.add_argument("-b", "--batch-size", help="batch size", type=int)
+    parser.add_argument("-i", "--image-size", help="image size")
     parser.add_argument("-p", "--persistence",
                         choices=["all", "best", "last"], default=[], help="save models", nargs="*")
     parser.add_argument("-s", "--stats", action="store_true", help="display statistics")
