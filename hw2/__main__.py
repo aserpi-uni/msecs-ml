@@ -19,6 +19,7 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--image-size", help="image size")
     parser.add_argument("-m", "--save-models",
                         choices=["all", "best", "last"], default=[], help="save models", nargs="*")
+    parser.add_argument("-p", "--predict-directory", help="predict classes for images in directory", type=Path)
     parser.add_argument("-s", "--stats", action="store_true", help="display statistics")
 
     args = vars(parser.parse_args())
@@ -39,3 +40,12 @@ if __name__ == "__main__":
     if args["stats"]:
         from hw2.evaluation import plot_metrics
         plot_metrics(args["net"], history_file)
+
+    if args["predict_directory"]:
+        from hw2.prediction import predict
+        predict(args["net"],
+                args["epochs"],
+                args["out_directory"],
+                args["predict_directory"],
+                args["batch_size"],
+                args["image_size"])
