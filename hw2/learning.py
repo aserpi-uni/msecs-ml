@@ -1,4 +1,3 @@
-import argparse
 import csv
 from contextlib import suppress
 from pathlib import Path
@@ -11,14 +10,14 @@ from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator
 import natsort
 
-from hw2.models import default_image_size
+from hw2.models import create_model, default_image_size
 
 
 def train(net: str, epochs: int,
           train_dir: Path, test_dir: Path, out_dir: Path,
           batch_size: int = None, image_size: Tuple[int, int] = None, save_models: Set[str] = None) -> Path:
     if not image_size:
-        default_image_size(net)
+        image_size = default_image_size(net)
     if save_models is None:
         save_models = []
 
@@ -33,20 +32,7 @@ def train(net: str, epochs: int,
         initial_epoch = 0
         num_classes = len([c for c in train_dir.iterdir() if c.is_dir()])
         (out_dir / "models").mkdir(exist_ok=True, parents=True)
-        if net == "earenet":
-            from hw2.models import earenet
-            model = earenet(image_size, num_classes)
-        elif net == "inception":
-            from hw2.models import inception
-            model = inception(image_size, num_classes)
-        elif net == "resnet50":
-            from hw2.models import resnet50
-            model = resnet50(image_size, num_classes)
-        elif net == "vgg16":
-            from hw2.models import vgg16
-            model = vgg16(image_size, num_classes)
-        else:
-            raise argparse.ArgumentError(f"Unknown network '{net}'")
+        model = create_model(net, image_size, num_classes)
 
     # Show model summary
     model.summary()

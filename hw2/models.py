@@ -4,6 +4,20 @@ from keras.layers import BatchNormalization, Dense, Flatten, Dropout
 from keras.models import Sequential
 
 
+def create_model(net: str, image_size: Tuple[int, int], num_classes: int) -> Sequential:
+    if net == "earenet":
+        model = earenet(image_size, num_classes)
+    elif net == "inception":
+        model = inception(image_size, num_classes)
+    elif net == "resnet50":
+        model = resnet50(image_size, num_classes)
+    elif net == "vgg16":
+        model = vgg16(image_size, num_classes)
+    else:
+        raise ValueError(f"Unknown network '{net}'")
+    return model
+
+
 def default_image_size(net: str) -> Tuple[int, int]:
     if net in ("earenet", "inception"):
         image_size = (299, 299)
