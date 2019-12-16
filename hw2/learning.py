@@ -2,7 +2,7 @@ import csv
 from contextlib import suppress
 from pathlib import Path
 import re
-from typing import Set, Tuple
+from typing import Optional, Set, Tuple
 
 from keras.callbacks import Callback, ModelCheckpoint
 from keras.engine.saving import load_model
@@ -14,9 +14,8 @@ import pandas as pd
 from hw2.models import create_model, default_image_size
 
 
-def train(net: str, epochs: int,
-          train_dir: Path, test_dir: Path, out_dir: Path,
-          batch_size: int = None, image_size: Tuple[int, int] = None, save_models: Set[str] = None) -> Path:
+def train(net: str, epochs: int, train_dir: Path, test_dir: Path, out_dir: Path, batch_size: Optional[int] = None,
+          image_size: Optional[Tuple[int, int]] = None, save_models: Optional[Set[str]] = None) -> Path:
     if not image_size:
         image_size = default_image_size(net)
     if save_models is None:

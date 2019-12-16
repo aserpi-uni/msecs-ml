@@ -1,6 +1,6 @@
 import math
 import pathlib
-from typing import Tuple
+from typing import Optional, Tuple
 
 from keras.engine.saving import load_model
 from keras.preprocessing.image import ImageDataGenerator
@@ -12,7 +12,7 @@ from hw2.models import default_image_size
 
 def predict(net: str, epoch: int,
             working_dir: pathlib.Path, test_dir: pathlib.Path,
-            batch_size: int = None, image_size: Tuple[int, int] = None) -> None:
+            batch_size: Optional[int] = None, image_size: Optional[Tuple[int, int]] = None) -> None:
     model = load_model(working_dir / "models" / f"{net}-{epoch}.h5")
     out_dir = working_dir / "predictions"
 

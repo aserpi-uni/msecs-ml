@@ -1,5 +1,6 @@
 import math
 from pathlib import Path
+from typing import Optional
 
 from matplotlib import pyplot as plt
 from matplotlib import ticker
@@ -7,7 +8,7 @@ import pandas as pd
 import seaborn as sns
 
 
-def plot_metrics(net: str, history: Path, loss_ylim: float = None) -> None:
+def plot_metrics(net: str, history: Path, loss_ylim: Optional[float] = None) -> None:
     metrics = pd.read_csv(history)
     metrics.index += 1
 
