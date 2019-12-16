@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # Optional arguments
     parser.add_argument("-b", "--batch-size", help="batch size", type=int)
     parser.add_argument("-i", "--image-size", help="image size")
-    parser.add_argument("-p", "--persistence",
+    parser.add_argument("-m", "--save-models",
                         choices=["all", "best", "last"], default=[], help="save models", nargs="*")
     parser.add_argument("-s", "--stats", action="store_true", help="display statistics")
 
@@ -34,7 +34,7 @@ if __name__ == "__main__":
                         args["out_directory"],
                         args["batch_size"],
                         args["image_size"],
-                        set(args["persistence"]))
+                        set(args["save_models"]))
 
     if args["stats"]:
         from hw2.evaluation import plot_metrics

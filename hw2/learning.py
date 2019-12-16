@@ -10,15 +10,15 @@ from pathlib import Path
 import re
 
 
-def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=None, persistence=None):
+def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=None, save_models=None):
     if not image_size:
         from hw2.data import ImageSize
         if net == "earenet" or net == "inception":
             image_size = ImageSize(299, 299)
         elif net == "resnet50" or net == "vgg16":
             image_size = ImageSize(224, 224)
-    if persistence is None:
-        persistence = []
+    if save_models is None:
+        save_models = []
 
     try:
         model_file = natsorted([f for f in (out_dir / "models").glob(f"{net}-*.h5")
@@ -78,13 +78,13 @@ def tune(net, epochs, train_dir, test_dir, out_dir, batch_size=None, image_size=
     # Define callbacks
     history_checkpoint = HistoryCheckPoint(net, out_dir)
     callbacks_list = [history_checkpoint]
-    if "best" in persistence:
+    if "best" in save_models:
         callbacks_list.append(ModelCheckpoint((out_dir / "models" / f"{net}-best.h5").as_posix(), period=1,
                                               save_best_only=True, verbose=1))
-    if "all" in persistence:
+    if "all" in save_models:
         callbacks_list.append(ModelCheckpoint((out_dir / "models" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
                                               verbose=1))
-    elif "last" in persistence:
+    elif "last" in save_models:
         callbacks_list.append(LastModelCheckpoint((out_dir / "models" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
                                                   verbose=1))
 
