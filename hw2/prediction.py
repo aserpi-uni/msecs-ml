@@ -10,9 +10,12 @@ import pandas as pd
 from hw2.models import default_image_size
 
 
-def predict(net: str, epoch: int,
-            working_dir: pathlib.Path, test_dir: pathlib.Path,
-            batch_size: Optional[int] = None, image_size: Optional[Tuple[int, int]] = None) -> None:
+def predict(net: str,
+            epoch: int,
+            working_dir: pathlib.Path,
+            test_dir: pathlib.Path,
+            batch_size: Optional[int] = None,
+            image_size: Optional[Tuple[int, int]] = None) -> None:
     model = load_model(working_dir / "models" / f"{net}-{epoch}.h5")
     out_dir = working_dir / "predictions"
 
@@ -27,7 +30,8 @@ def predict(net: str, epoch: int,
         target_size=image_size,
         **{k: v for k, v in {"batch_size": batch_size}.items() if v})
     preds = np.argmax(model.predict_generator(test_generator,
-                                              steps=math.ceil(test_generator.n / test_generator.batch_size),
+                                              steps=math.ceil(test_generator.n /
+                                                              test_generator.batch_size),
                                               verbose=1),
                       axis=1)
 

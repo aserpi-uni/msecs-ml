@@ -16,11 +16,13 @@ def plot_metrics(net: str, history: Path, loss_ylim: Optional[float] = None) -> 
                             "loss": "Loss",
                             "val_acc": "Validation accuracy",
                             "val_loss": "Validation loss"},
-                   inplace=True)
+                   inplace=True)  # yapf: disable
     x_formatter = ticker.MultipleLocator(math.ceil(len(metrics) / 20))
 
     plt.figure()
-    ax = sns.lineplot(data=metrics[["Accuracy", "Validation accuracy"]], dashes=False, markers=True)
+    ax = sns.lineplot(data=metrics[["Accuracy", "Validation accuracy"]],
+                      dashes=False,
+                      markers=True)
     ax.set(xlabel="Epoch", ylabel='Accuracy', ylim=(0, 1))
     ax.xaxis.set_major_locator(x_formatter)
     ax.yaxis.set_major_locator(ticker.MultipleLocator(0.1))

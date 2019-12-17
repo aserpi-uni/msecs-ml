@@ -33,16 +33,34 @@ def earenet(image_size: Tuple[int, int], num_classes: int) -> Sequential:
 
     model = Sequential(name="EareNet")
 
-    model.add(Conv2D(64, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding="same", name="bolck1_conv",
-                     input_shape=(*image_size, 3)))
+    model.add(
+        Conv2D(64,
+               kernel_size=(3, 3),
+               strides=(1, 1),
+               activation='relu',
+               padding="same",
+               name="bolck1_conv",
+               input_shape=(*image_size, 3)))
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='same', name='block1_pool'))
     model.add(BatchNormalization(name='block1_norm'))
 
-    model.add(Conv2D(128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same', name="bolck2_conv"))
+    model.add(
+        Conv2D(128,
+               kernel_size=(3, 3),
+               strides=(1, 1),
+               activation='relu',
+               padding='same',
+               name="bolck2_conv"))
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='same', name='block2_pool'))
     model.add(BatchNormalization(name='block2_norm'))
 
-    model.add(Conv2D(256, kernel_size=(2, 2), strides=(1, 1), activation='relu', padding='valid', name="bolck3_conv"))
+    model.add(
+        Conv2D(256,
+               kernel_size=(2, 2),
+               strides=(1, 1),
+               activation='relu',
+               padding='valid',
+               name="bolck3_conv"))
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='valid', name='block3_pool'))
     model.add(BatchNormalization(name='block3_norm'))
 
@@ -57,7 +75,9 @@ def earenet(image_size: Tuple[int, int], num_classes: int) -> Sequential:
 
 def inception(image_size: Tuple[int, int], num_classes: int) -> Sequential:
     from keras.applications import InceptionV3
-    inception_conv = InceptionV3(weights="imagenet", include_top=False, input_shape=(*image_size, 3))
+    inception_conv = InceptionV3(weights="imagenet",
+                                 include_top=False,
+                                 input_shape=(*image_size, 3))
 
     return _fine_tuning_model(inception_conv, num_classes)
 

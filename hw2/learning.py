@@ -14,8 +14,14 @@ import pandas as pd
 from hw2.models import create_model, default_image_size
 
 
-def train(net: str, epochs: int, train_dir: Path, test_dir: Path, out_dir: Path, batch_size: Optional[int] = None,
-          image_size: Optional[Tuple[int, int]] = None, save_models: Optional[Set[str]] = None) -> Path:
+def train(net: str,
+          epochs: int,
+          train_dir: Path,
+          test_dir: Path,
+          out_dir: Path,
+          batch_size: Optional[int] = None,
+          image_size: Optional[Tuple[int, int]] = None,
+          save_models: Optional[Set[str]] = None) -> Path:
     if not image_size:
         image_size = default_image_size(net)
     if save_models is None:
@@ -23,7 +29,8 @@ def train(net: str, epochs: int, train_dir: Path, test_dir: Path, out_dir: Path,
 
     try:
         model_file = natsort.natsorted([f for f in (out_dir / "models").glob(f"{net}-*.h5")
-                                        if re.match(fr"{net}-\d+\.h5", f.name)])[-1]
+                                        if re.match(fr"{net}-\d+\.h5", f.name)
+                                        ])[-1]  # yapf:disable
         initial_epoch = int(re.match(fr"{net}-(\d+)\.h5", model_file.name).group(1))
         model = load_model(model_file)
         print(f"Loaded model {model_file.name}")
@@ -48,10 +55,11 @@ def train(net: str, epochs: int, train_dir: Path, test_dir: Path, out_dir: Path,
     validation_datagen = ImageDataGenerator(rescale=1. / 255)
 
     # Use batch_size only if it is a meaningful value
-    train_generator = train_datagen.flow_from_directory(train_dir,
-                                                        target_size=image_size,
-                                                        class_mode='categorical',
-                                                        **{k: v for k, v in {"batch_size": batch_size}.items() if v})
+    train_generator = train_datagen.flow_from_directory(
+        train_dir,
+        target_size=image_size,
+        class_mode='categorical',
+        **{k: v for k, v in {"batch_size": batch_size}.items() if v})
     validation_generator = validation_datagen.flow_from_directory(
         test_dir,
         target_size=image_size,
@@ -67,14 +75,21 @@ def train(net: str, epochs: int, train_dir: Path, test_dir: Path, out_dir: Path,
     history_checkpoint = HistoryCheckPoint(net, out_dir)
     callbacks_list = [history_checkpoint]
     if "best" in save_models:
-        callbacks_list.append(ModelCheckpoint((out_dir / "models" / f"{net}-best.h5").as_posix(), period=1,
-                                              save_best_only=True, verbose=1))
+        callbacks_list.append(
+            ModelCheckpoint((out_dir / "models" / f"{net}-best.h5").as_posix(),
+                            period=1,
+                            save_best_only=True,
+                            verbose=1))  # TODO: restore precedent history
     if "all" in save_models:
-        callbacks_list.append(ModelCheckpoint((out_dir / "models" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
-                                              verbose=1))
+        callbacks_list.append(
+            ModelCheckpoint((out_dir / "models" / (net + "-{epoch:02d}.h5")).as_posix(),
+                            period=1,
+                            verbose=1))
     elif "last" in save_models:
-        callbacks_list.append(LastModelCheckpoint((out_dir / "models" / (net + "-{epoch:02d}.h5")).as_posix(), period=1,
-                                                  verbose=1))
+        callbacks_list.append(
+            LastModelCheckpoint((out_dir / "models" / (net + "-{epoch:02d}.h5")).as_posix(),
+                                period=1,
+                                verbose=1))
 
     # Train model
     model.fit_generator(train_generator,
@@ -83,17 +98,19 @@ def train(net: str, epochs: int, train_dir: Path, test_dir: Path, out_dir: Path,
                         initial_epoch=initial_epoch,
                         steps_per_epoch=(train_generator.samples / train_generator.batch_size),
                         validation_data=validation_generator,
-                        validation_steps=(validation_generator.samples / validation_generator.batch_size),
+                        validation_steps=(validation_generator.samples /
+                                          validation_generator.batch_size),
                         verbose=1)
 
-    class_names = pd.Series(sorted([d.name for d in train_dir.iterdir() if d.is_dir()]), name="class")
+    class_names = pd.Series(sorted([d.name for d in train_dir.iterdir() if d.is_dir()]),
+                            name="class")
     class_names.index.name = "id"
     class_names.to_csv(out_dir / "classes.csv", header=True, index=True)
 
     return history_checkpoint.history
 
 
-class HistoryCheckPoint(Callback):
+class HistoryCheckPoint(Callback):  # TODO: CSVLogger
     metrics = ["acc", "val_acc", "loss", "val_loss"]
 
     def __init__(self, net, out_dir):
@@ -112,9 +129,10 @@ class HistoryCheckPoint(Callback):
 
 
 class LastModelCheckpoint(ModelCheckpoint):
+
     def on_epoch_end(self, epoch, logs=None):
         if self.epochs_since_last_save + 1 >= self.period:
             with suppress(FileNotFoundError):  # New in Python 3.8: Path.unlink(missing_ok=True)
-                Path(self.filepath.format(epoch=epoch-self.epochs_since_last_save)).unlink()
+                Path(self.filepath.format(epoch=epoch - self.epochs_since_last_save)).unlink()
 
         super().on_epoch_end(epoch, logs=logs)
