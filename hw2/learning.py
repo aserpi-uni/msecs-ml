@@ -17,7 +17,7 @@ from hw2.models import create_model, default_image_size
 def train(net: str,
           epochs: int,
           train_dir: Path,
-          test_dir: Path,
+          val_dir: Path,
           out_dir: Path,
           batch_size: Optional[int] = None,
           image_size: Optional[Tuple[int, int]] = None,
@@ -61,7 +61,7 @@ def train(net: str,
         class_mode='categorical',
         **{k: v for k, v in {"batch_size": batch_size}.items() if v})
     validation_generator = validation_datagen.flow_from_directory(
-        test_dir,
+        val_dir,
         target_size=image_size,
         class_mode='categorical',
         shuffle=False,

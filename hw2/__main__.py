@@ -7,7 +7,7 @@ from hw2.learning import train
 def main(net: str,
          epochs: int,
          train_directory: Path,
-         test_directory: Path,
+         val_directory: Path,
          out_directory: Path,
          batch_size: Optional[int] = None,
          image_size: Optional[Tuple[int, int]] = None,
@@ -18,7 +18,7 @@ def main(net: str,
     if save_models is None:
         save_models = []
 
-    history_file = train(net, epochs, train_directory, test_directory, out_directory, batch_size,
+    history_file = train(net, epochs, train_directory, val_directory, out_directory, batch_size,
                          image_size, set(save_models))
 
     if stats:
@@ -40,8 +40,7 @@ if __name__ == "__main__":
                         help="neural network")
     parser.add_argument("epochs", help="epochs", type=int)
     parser.add_argument("train_directory", help="train dataset directory", type=Path)
-    parser.add_argument("test_directory", help="test dataset directory",
-                        type=Path)  # TODO: rename in val_directory
+    parser.add_argument("val_directory", help="test dataset directory", type=Path)
     parser.add_argument("out_directory", help="output directory", type=Path)
 
     # Optional arguments
@@ -70,6 +69,6 @@ if __name__ == "__main__":
         if len(args["image_size"]) != 2:
             parser.error(image_size_error)
 
-    main(args["net"], args["epochs"], args["train_directory"], args["test_directory"],
+    main(args["net"], args["epochs"], args["train_directory"], args["val_directory"],
          args["out_directory"], args["batch_size"], args["image_size"], args["save_models"],
          args["stats"], args["predict_directory"])
