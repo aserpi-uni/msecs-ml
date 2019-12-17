@@ -1,10 +1,9 @@
-import csv
 from contextlib import suppress
 from pathlib import Path
 import re
 from typing import Optional, Set, Tuple
 
-from keras.callbacks import Callback, ModelCheckpoint
+from keras.callbacks import CSVLogger, ModelCheckpoint
 from keras.engine.saving import load_model
 from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator
@@ -72,8 +71,8 @@ def train(net: str,
                   metrics=['acc'])
 
     # Define callbacks
-    history_checkpoint = HistoryCheckPoint(net, out_dir)
-    callbacks_list = [history_checkpoint]
+    history_file = out_dir / f"{net}.csv"
+    callbacks_list = [(CSVLogger(str(history_file), append=True))]
     if "best" in save_models:
         callbacks_list.append(
             ModelCheckpoint((out_dir / "models" / f"{net}-best.h5").as_posix(),
@@ -107,25 +106,7 @@ def train(net: str,
     class_names.index.name = "id"
     class_names.to_csv(out_dir / "classes.csv", header=True, index=True)
 
-    return history_checkpoint.history
-
-
-class HistoryCheckPoint(Callback):  # TODO: CSVLogger
-    metrics = ["acc", "val_acc", "loss", "val_loss"]
-
-    def __init__(self, net, out_dir):
-        super().__init__()
-        self.history = out_dir / f"{net}.csv"
-
-        if not self.history.is_file():
-            with open(self.history, "w", newline='') as fout:
-                writer = csv.DictWriter(fout, fieldnames=HistoryCheckPoint.metrics)
-                writer.writeheader()
-
-    def on_epoch_end(self, epoch, logs=None):
-        with open(self.history, "a", newline='') as fout:
-            csv.DictWriter(fout, extrasaction="ignore", fieldnames=HistoryCheckPoint.metrics, restval=0) \
-                .writerow(logs)
+    return history_file
 
 
 class LastModelCheckpoint(ModelCheckpoint):

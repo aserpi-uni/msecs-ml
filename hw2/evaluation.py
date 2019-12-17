@@ -9,7 +9,7 @@ import seaborn as sns
 
 
 def plot_metrics(net: str, history: Path, loss_ylim: Optional[float] = None) -> None:
-    metrics = pd.read_csv(history)
+    metrics = pd.read_csv(history, index_col="epoch")
     metrics.index += 1
 
     metrics.rename(columns={"acc": "Accuracy",
@@ -17,6 +17,7 @@ def plot_metrics(net: str, history: Path, loss_ylim: Optional[float] = None) -> 
                             "val_acc": "Validation accuracy",
                             "val_loss": "Validation loss"},
                    inplace=True)  # yapf: disable
+    metrics.index.name = "Epoch"
     x_formatter = ticker.MultipleLocator(math.ceil(len(metrics) / 20))
 
     plt.figure()
